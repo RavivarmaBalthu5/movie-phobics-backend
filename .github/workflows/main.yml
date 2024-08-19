@@ -20,11 +20,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build the project
+      - name: Create build directory and build the project
         run: |
           mkdir -p build
           echo "This is a build artifact" > build/movie-phobics-backend.zip
-        # Ensure the build artifact is correctly created
+        # Ensure the build artifact is correctly created or recreated
 
       - name: List build directory
         run: ls -al ./build
@@ -49,7 +49,7 @@ jobs:
         run: echo "Deploying to Dev environment..."
         env:
           ENVIRONMENT: dev
-          
+
   deploy-prod:
     runs-on: ubuntu-latest
     needs: build
@@ -115,10 +115,22 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ensure Build Artifact Exists
+        id: ensure_artifact
+        run: |
+          if [ ! -f ./build/movie-phobics-backend.zip ]; then
+            echo "Build artifact does not exist. Creating..."
+            mkdir -p ./build
+            echo "This is a build artifact" > ./build/movie-phobics-backend.zip
+          fi
+
       - name: List build directory before upload
         run: ls -al ./build
         # Ensure the file exists before uploading
+
       - name: Upload Release Assets
+        if: steps.ensure_artifact.outcome == 'success'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
