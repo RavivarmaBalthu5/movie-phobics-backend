@@ -8,5 +8,5 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "/api.js"
+  to = "/index.js"
   status = 200
