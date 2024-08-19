@@ -17,12 +17,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Run a one-line script
         run: echo "Building the project..."
-      
+
       - name: Run tests
         run: echo "Running tests..."
+
+      - name: Create build artifact
+        run: |
+          mkdir -p build
+          echo "This is a build artifact" > build/movie-phobics-backend.zip
+        # This step ensures the file exists; replace this with your actual build process
 
   deploy-dev:
     runs-on: ubuntu-latest
@@ -63,17 +69,31 @@ jobs:
       - name: Get Latest Tag
         id: get_tag
         run: |
-          # Generate a unique tag based on timestamp or versioning strategy
-          TAG_VERSION=$(date +'%Y%m%d%H%M%S')
-          echo "TAG_VERSION=v$TAG_VERSION"
-          echo "TAG_VERSION=v$TAG_VERSION" >> $GITHUB_ENV
+          # Fetch all tags from the remote
+          git fetch --tags
+          # Get the latest tag (e.g., v1.0.0)
+          latest_tag=$(git tag -l "v*" | sort -V | tail -n 1)
+          echo "Latest tag: $latest_tag"
+          # Increment the version number
+          if [ -z "$latest_tag" ]; then
+            new_tag="v1.0.0"
+          else
+            # Extract the current version number (e.g., 1.0.0)
+            version=$(echo "$latest_tag" | sed 's/v//')
+            # Split version into major, minor, patch
+            IFS='.' read -r major minor patch <<< "$version"
+            # Increment the patch number
+            new_patch=$((patch + 1))
+            new_tag="v${major}.${minor}.${new_patch}"
+          fi
+          echo "New tag: $new_tag"
+          echo "TAG_VERSION=$new_tag" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Tag
         id: create_tag
         run: |
-          # Create a new tag and push it to the repository
           git tag $TAG_VERSION
           git push origin $TAG_VERSION
         env:
