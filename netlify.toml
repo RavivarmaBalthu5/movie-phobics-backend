@@ -3,6 +3,9 @@
 [build]
   functions = "src/handlers"  # Directory where your serverless functions are located
 
+[build.environment]
+  MONGODB_URI = "mongodb+srv://Ravivarma:RavivarmaMongo@movie-phobics.x3v8z.mongodb.net/?retryWrites=true&w=majority&appName=movie-phobics"
+
 [[redirects]]
   from = "/api/*"
   to = "/api.js"
