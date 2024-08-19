@@ -10,9 +10,23 @@ const client = new MongoClient(uri, {
     }
 });
 
-async function getData() {
+async function setMongoConnection() {
     try {
         // Connect the client to the server
+        return await client.connect();
+    } catch (err) {
+        console.error('Error connecting to MongoDB Atlas', err);
+        throw err; // Rethrow the error to handle it in the calling function
+    } finally {
+        // Close the connection
+        await client.close();
+    }
+}
+
+async function getMovies(projections) {
+    try {
+        // Connect the client to the server
+        let client = await setMongoConnection();
         await client.connect();
         console.log('Connected successfully to MongoDB Atlas');
 
@@ -23,10 +37,10 @@ async function getData() {
         // Query for documents
         const query = {}; // Empty query to get all documents
         const options = {
-            projection: { _id: 0, title: 1, type: 1 }, // Example projection
+            projection: projections
         };
 
-        const cursor = collection.find(query, options);
+        const cursor = collection.find(query, options).limit(500);
 
         // Collect documents into an array
         const results = [];
@@ -34,7 +48,7 @@ async function getData() {
 
         return results;
     } catch (err) {
-        console.error('Error connecting to MongoDB Atlas or retrieving data:', err);
+        console.error('Error retrieving data:', err);
         throw err; // Rethrow the error to handle it in the calling function
     } finally {
         // Close the connection
@@ -42,4 +56,4 @@ async function getData() {
     }
 }
 
-module.exports = { getData };
+module.exports = { getMovies };
