@@ -17,12 +17,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Run a one-line script
         run: echo "Building the project..."
-      
+
       - name: Run tests
         run: echo "Running tests..."
+
+      - name: Create build artifact
+        run: |
+          mkdir -p build
+          echo "This is a build artifact" > build/movie-phobics-backend.zip
+        # This step ensures the file exists; replace this with your actual build process
 
   deploy-dev:
     runs-on: ubuntu-latest
@@ -59,23 +65,46 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
-      - name: Create Version Tag
-        id: create_tag
+
+      - name: Get Latest Tag
+        id: get_tag
         run: |
-          # Bump version number using the latest commit hash or a strategy of your choice
-          TAG_VERSION=$(date +'%Y%m%d%H%M%S') # Example: timestamp as version
-          git tag v$TAG_VERSION
-          git push origin v$TAG_VERSION
+          # Fetch all tags from the remote
+          git fetch --tags
+          # Get the latest tag (e.g., v1.0.0)
+          latest_tag=$(git tag -l "v*" | sort -V | tail -n 1)
+          echo "Latest tag: $latest_tag"
+          # Increment the version number
+          if [ -z "$latest_tag" ]; then
+            new_tag="v1.0.0"
+          else
+            # Extract the current version number (e.g., 1.0.0)
+            version=$(echo "$latest_tag" | sed 's/v//')
+            # Split version into major, minor, patch
+            IFS='.' read -r major minor patch <<< "$version"
+            # Increment the patch number
+            new_patch=$((patch + 1))
+            new_tag="v${major}.${minor}.${new_patch}"
+          fi
+          echo "New tag: $new_tag"
+          echo "TAG_VERSION=$new_tag" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
+      - name: Create Tag
+        id: create_tag
+        run: |
+          git tag $TAG_VERSION
+          git push origin $TAG_VERSION
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: v${{ steps.create_tag.outputs.version }}
-          release_name: Release v${{ steps.create_tag.outputs.version }}
+          tag_name: ${{ env.TAG_VERSION }}
+          release_name: Release ${{ env.TAG_VERSION }}
           draft: false
           prerelease: false
         env:
@@ -85,6 +114,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./path/to/your//build/movie-phobics-backend.zip
+          asset_path: ./build/movie-phobics-backend.zip
           asset_name: movie-phobics-backend.zip
           asset_content_type: application/zip
