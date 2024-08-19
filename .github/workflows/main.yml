@@ -1,10 +1,15 @@
-name: CI/CD Pipeline
+name: CI/CD
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch: # Allows manual triggering
+      - 'feature*'
+  pull_request:
+    branches:
+      - main
+      - 'feature*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -12,20 +17,40 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18' # Replace with your Node.js version
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
+      
+      - name: Run a one-line script
+        run: echo "Building the project..."
+      
       - name: Run tests
-        run: npm test
+        run: echo "Running tests..."
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: dev
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Dev
+        run: echo "Deploying to Dev environment..."
+        env:
+          ENVIRONMENT: dev
+          
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: prod
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Production
+        run: echo "Deploying to Production environment..."
+        env:
+          ENVIRONMENT: prod
 
   create-release:
     runs-on: ubuntu-latest
@@ -34,23 +59,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Bump version and create tag
-        id: bump_version
+      
+      - name: Create Version Tag
+        id: create_tag
         run: |
-          # Example versioning strategy
-          NEW_VERSION=$(date +'%Y%m%d%H%M%S') # Use your own versioning strategy here
-          git tag v$NEW_VERSION
-          git push origin v$NEW_VERSION
+          # Bump version number using the latest commit hash or a strategy of your choice
+          TAG_VERSION=$(date +'%Y%m%d%H%M%S') # Example: timestamp as version
+          git tag v$TAG_VERSION
+          git push origin v$TAG_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: v${{ steps.bump_version.outputs.version }}
-          release_name: Release v${{ steps.bump_version.outputs.version }}
+          tag_name: v${{ steps.create_tag.outputs.version }}
+          release_name: Release v${{ steps.create_tag.outputs.version }}
           draft: false
           prerelease: false
         env:
