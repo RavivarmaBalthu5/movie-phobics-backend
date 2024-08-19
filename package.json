@@ -2,7 +2,7 @@
   "name": "movie-phobics-backend",
   "version": "1.0.0",
   "description": "Provides apis for movie-phobics UI",
-  "main": "index.js",
+  "main": "src/handlers/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/RavivarmaBalthu5/movie-phobics-backend/issues"
   },
-  "homepage": "https://github.com/RavivarmaBalthu5/movie-phobics-backend#readme"
+  "homepage": "https://github.com/RavivarmaBalthu5/movie-phobics-backend#readme",
+  "devDependencies": {
+    "netlify-cli": "^12.0.0"
+  },
+  "engines": {
+    "node": "22.x"
+  }
 }
