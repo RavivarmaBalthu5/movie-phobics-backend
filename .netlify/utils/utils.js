@@ -1,5 +1,5 @@
 exports.prepareProjections = (projectionArray) => {
-    const isValidKey = (key) => /^[a-zA-Z0-9]+$/.test(key); // Only alphanumeric characters are allowed
+    const isValidKey = (key) => /^[a-zA-Z0-9.]+$/.test(key); // Only alphanumeric characters are allowed
 
     const projectionObj = projectionArray.reduce((acc, key) => {
         if (isValidKey(key)) {
