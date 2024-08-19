@@ -1,19 +1,21 @@
-// src/handlers/index.js
+// src/handlers/handler.js
 
-exports.handler = async (event, context) => {
+const { getData } = require("../services/db");
+
+exports.handler = async (event) => {
   try {
-    // Your function logic here
-
+    console.log('Event', JSON.stringify(event, null, 2));
+    const data = await getData();
+    console.log('Data retrieved:', data);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Success' }),
+      body: JSON.stringify({ message: JSON.stringify(event, null, 2) }),
     };
-  } catch (error) {
-    console.error('Error:', error);
-
+  }
+  catch (e) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
+      body: JSON.stringify({ message: JSON.stringify(e, null, 2) }),
     };
   }
 };

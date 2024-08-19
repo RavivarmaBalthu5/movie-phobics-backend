@@ -20,6 +20,9 @@
     "netlify-cli": "^12.0.0"
   },
   "engines": {
-    "node": "22.x"
+    "node": "18.x"
+  },
+  "dependencies": {
+    "mongodb": "^6.8.0"
   }
 }
