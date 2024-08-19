@@ -14,21 +14,27 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      build-path: ./build
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run a one-line script
-        run: echo "Building the project..."
-
-      - name: Run tests
-        run: echo "Running tests..."
-
-      - name: Create build artifact
+      - name: Build the project
         run: |
           mkdir -p build
           echo "This is a build artifact" > build/movie-phobics-backend.zip
-        # This step ensures the file exists; replace this with your actual build process
+        # Ensure the build artifact is correctly created
+
+      - name: List build directory
+        run: ls -al ./build
+        # Debug step to ensure the artifact is there
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: ./build/
 
   deploy-dev:
     runs-on: ubuntu-latest
