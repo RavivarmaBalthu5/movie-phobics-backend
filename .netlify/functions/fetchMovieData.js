@@ -10,7 +10,7 @@ exports.handler = async (event, context) => {
     };
   }
 
-  const TMDB_API_KEY = process.env.TMDB_API_KEY;
+  const TMDB_API_KEY = '2fb9673c2de3d5f1fb9f998dddbf34d7';
 
   if (!TMDB_API_KEY) {
     return {
