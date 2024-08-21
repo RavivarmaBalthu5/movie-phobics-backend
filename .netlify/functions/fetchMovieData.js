@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const CLIENT_ID = 'fdb249036f1e814f0d12e45b3df49b36614e06d6f08229147f23c440a57e448b':
+const CLIENT_ID = 'fdb249036f1e814f0d12e45b3df49b36614e06d6f08229147f23c440a57e448b';
 const CLIENT_SECRET = '0ef0c00331f45233c4fddd2c8cfc9dcee0a4e16b56f272c2cc57d245e1f02002';
 
 // Function to get access token using client credentials
