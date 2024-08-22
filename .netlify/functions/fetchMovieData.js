@@ -1,7 +1,8 @@
 const axios = require('axios');
 
 exports.handler = async (event, context) => {
-  const movieName = event.queryStringParameters.name;
+  const movieName = event.queryStringParameters.movie;
+  const allMovies = event.queryStringParameters.allmovies;
 
   if (!movieName) {
     return {
@@ -18,10 +19,11 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ error: 'TMDB API key is not set' })
     };
   }
+  const BASE_URL = `https://api.themoviedb.org/3/`
 
   try {
     // Search for the movie to get the ID
-    const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`;
+    const searchUrl = allMovies ? `${BASE_URL}movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=1` : `${BASE_URL}search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`;
     const searchResponse = await axios.get(searchUrl);
 
     if (searchResponse.data.results.length === 0) {
