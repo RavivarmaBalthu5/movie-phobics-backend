@@ -4,10 +4,10 @@ exports.handler = async (event, context) => {
   const movieName = event.queryStringParameters.movie;
   const allMovies = event.queryStringParameters.allmovies;
 
-  if (!movieName) {
+  if (!movieName && !allMovies) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Movie name is required' })
+      body: JSON.stringify({ error: 'Either Movie or allmovies param required' })
     };
   }
 
