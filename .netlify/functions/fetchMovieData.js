@@ -23,10 +23,15 @@ exports.handler = async (event, context) => {
     // Search for the movie to get the ID
     const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`;
     const searchResponse = await axios.get(searchUrl);
-    
+
     if (searchResponse.data.results.length === 0) {
       return {
         statusCode: 404,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*', // Allow all origins
+          'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
+        },
         body: JSON.stringify({ error: 'Movie not found' })
       };
     }
@@ -39,6 +44,11 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*', // Allow all origins
+        'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
+      },
       body: JSON.stringify({
         title: detailsResponse.data.title,
         year: detailsResponse.data.release_date.split('-')[0],
@@ -53,6 +63,11 @@ exports.handler = async (event, context) => {
   } catch (error) {
     return {
       statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*', // Allow all origins
+        'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
+      },
       body: JSON.stringify({ error: 'Error fetching movie data', details: error.message })
     };
   }
