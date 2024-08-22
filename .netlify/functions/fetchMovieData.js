@@ -38,20 +38,18 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const movieId = searchResponse.data.results[0].id;
+    // Prepare an array to hold movie details
+    const movieDetailsArray = [];
 
-    // Fetch movie details
-    const detailsUrl = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=watch/providers,images`;
-    const detailsResponse = await axios.get(detailsUrl);
+    // Fetch details for each movie
+    for (const movie of searchResponse.data.results) {
+      const movieId = movie.id;
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*', // Allow all origins
-        'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
-      },
-      body: JSON.stringify({
+      // Fetch movie details
+      const detailsUrl = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=watch/providers,images`;
+      const detailsResponse = await axios.get(detailsUrl);
+
+      movieDetailsArray.push({
         title: detailsResponse.data.title,
         year: detailsResponse.data.release_date.split('-')[0],
         overview: detailsResponse.data.overview,
@@ -60,7 +58,17 @@ exports.handler = async (event, context) => {
           ? `https://image.tmdb.org/t/p/original${detailsResponse.data.images.posters[0].file_path}`
           : 'No image available',
         streaming_providers: detailsResponse.data['watch/providers']?.results || 'No streaming data available'
-      })
+      });
+    }
+
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*', // Allow all origins
+        'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
+      },
+      body: JSON.stringify(movieDetailsArray)
     };
   } catch (error) {
     return {
