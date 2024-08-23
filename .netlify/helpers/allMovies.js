@@ -1,4 +1,4 @@
-const { BASE_URL } = require("../utils/constants");
+const { BASE_URL, TMDB_API_KEY } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 
 const getInitialMovies = async () => {
