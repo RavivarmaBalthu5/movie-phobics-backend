@@ -1,7 +1,7 @@
 const { BASE_URL, TMDB_API_KEY } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
+const axios = require('axios');
 
-// src/services/movieService.js
 const fetchTrailer = async (movieId) => {
     if (!TMDB_API_KEY) {
         return prepareResponse(500, { error: 'TMDB API key is not set' });
