@@ -1,5 +1,6 @@
 const { BASE_URL, TMDB_API_KEY } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
+const axios = require('axios');
 
 const searchMovie = async (movieName) => {
     if (!TMDB_API_KEY) {
