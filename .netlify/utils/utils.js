@@ -13,3 +13,15 @@ exports.prepareProjections = (projectionArray) => {
 
     return projectionObj;
 }
+
+exports.prepareResponse = (statusCode, body) => {
+    return {
+        statusCode: statusCode,
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*', // Allow all origins
+            'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
+        },
+        body: JSON.stringify(body)
+    };
+}

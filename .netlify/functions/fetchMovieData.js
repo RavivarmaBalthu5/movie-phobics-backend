@@ -1,84 +1,24 @@
-const axios = require('axios');
+const { getInitialMovies } = require('../helpers/allMovies');
+const { searchMovie } = require('../helpers/searchMovie');
+const { fetchTrailer } = require('../helpers/trailer');
+const { prepareResponse } = require('../utils/utils');
 
 exports.handler = async (event, context) => {
   const movieName = event.queryStringParameters.movie;
   const allMovies = event.queryStringParameters.allmovies;
-
-  if (!movieName && !allMovies) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Either Movie or allmovies param required' })
-    };
-  }
-
-  const TMDB_API_KEY = '2fb9673c2de3d5f1fb9f998dddbf34d7';
-
-  if (!TMDB_API_KEY) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'TMDB API key is not set' })
-    };
-  }
-  const BASE_URL = `https://api.themoviedb.org/3/`
+  const trailerMovieId = event.queryStringParameters.trailer; //from UI we get movieId for trailer
 
   try {
-    // Search for the movie to get the ID
-    const searchUrl = allMovies ? `${BASE_URL}movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=1` : `${BASE_URL}search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`;
-    const searchResponse = await axios.get(searchUrl);
-
-    if (searchResponse.data.results.length === 0) {
-      return {
-        statusCode: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*', // Allow all origins
-          'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
-        },
-        body: JSON.stringify({ error: 'Movie not found' })
-      };
+    if (allMovies) {
+      return await getInitialMovies()
     }
-
-    // Prepare an array to hold movie details
-    const movieDetailsArray = [];
-
-    // Fetch details for each movie
-    for (const movie of searchResponse.data.results) {
-      const movieId = movie.id;
-
-      // Fetch movie details
-      const detailsUrl = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=watch/providers,images`;
-      const detailsResponse = await axios.get(detailsUrl);
-
-      movieDetailsArray.push({
-        title: detailsResponse.data.title,
-        year: detailsResponse.data.release_date.split('-')[0],
-        overview: detailsResponse.data.overview,
-        release_date: detailsResponse.data.release_date,
-        image: detailsResponse.data.images?.posters[0]?.file_path
-          ? `https://image.tmdb.org/t/p/original${detailsResponse.data.images.posters[0].file_path}`
-          : 'No image available',
-        streaming_providers: detailsResponse.data['watch/providers']?.results || 'No streaming data available'
-      });
+    if (movieName) {
+      return await searchMovie(movieName)
     }
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*', // Allow all origins
-        'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
-      },
-      body: JSON.stringify(movieDetailsArray)
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*', // Allow all origins
-        'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
-      },
-      body: JSON.stringify({ error: 'Error fetching movie data', details: error.message })
-    };
+    if (trailerMovieId) {
+      return await fetchTrailer(trailerMovieId)
+    }
+  } catch (e) {
+    return prepareResponse(500, e.message)
   }
 };
