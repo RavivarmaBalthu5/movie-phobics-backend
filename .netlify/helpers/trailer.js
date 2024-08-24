@@ -10,7 +10,7 @@ const fetchTrailer = async (movieId) => {
         let searchResponse;
         const TMDB_API_KEY = await getTMDBApiKey();
         // Search for the movie to get the ID
-        searchResponse = await find(TRAILERS_COLLECTION, { "movieId": movieId }, null, DEFAULT_LIMIT)
+        searchResponse = await find(TRAILERS_COLLECTION, { "movieId": Number(movieId) }, null, DEFAULT_LIMIT)
         console.log(`searchResponse: ${JSON.stringify(searchResponse)}`);
         // Search for the movie video data
         if (isEmpty(searchResponse)) {
