@@ -46,7 +46,6 @@ async function find(dbCollection, query, projections, limit = 10) {
         // Collect documents into an array
         const results = [];
         await cursor.forEach(doc => results.push(doc));
-        console.log(`results: ${JSON.stringify(results)}`);
         return results;
     } catch (err) {
         console.error('Error retrieving data:', err);
