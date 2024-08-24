@@ -1,5 +1,6 @@
 const NodeCache = require('node-cache');
 const { TMDB_API_ID, DEFAULT_LIMIT, API_COLLECTION } = require('../utils/constants');
+const { find } = require('./db');
 const apiKeyCache = new NodeCache({ stdTTL: 24 * 60 * 60 }); // Cache for 1 day
 
 async function getTMDBApiKey() {
