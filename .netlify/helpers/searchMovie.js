@@ -10,7 +10,7 @@ const searchMovie = async (movieName) => {
         if (!TMDB_API_KEY) {
             return prepareResponse(500, { error: 'TMDB API key is not set' });
         }
-        logger.info(`api - ${TMDB_API_KEY}`)
+        logger.info(`api - ${JSON.stringify(TMDB_API_KEY)}`)
         // Search for the movie to get the ID
         const searchResponse = await axios.get(`${BASE_URL}search/movie?api_key=${TMDB_API_KEY[0]?.api_key}&query=${encodeURIComponent(movieName)}`);
 
