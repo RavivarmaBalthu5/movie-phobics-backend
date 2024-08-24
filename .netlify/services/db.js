@@ -68,6 +68,7 @@ async function upsertDocuments(collectionName, documents, queryParam) {
         const collection = database.collection(collectionName);
         const options = { upsert: true };
         if (isEqual(queryParam, 'movieId')) {
+            documents.createdDate = new Date();
             const query = { [queryParam]: documents.id };
             const update = { $set: documents };
             await collection.updateOne(query, update, options);
