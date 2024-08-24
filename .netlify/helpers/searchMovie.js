@@ -1,13 +1,14 @@
-const { BASE_URL, TMDB_API_KEY } = require("../utils/constants");
+const { find } = require("../services/db");
+const { BASE_URL, API_COLLECTION, TMDB_API_ID } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 const axios = require('axios');
 
 const searchMovie = async (movieName) => {
-    if (!TMDB_API_KEY) {
-        return prepareResponse(500, { error: 'TMDB API key is not set' });
-    }
-
     try {
+        const TMDB_API_KEY = await find(API_COLLECTION, { "_id": TMDB_API_ID }, null, DEFAULT_LIMIT)[0]?.api_key;
+        if (!TMDB_API_KEY) {
+            return prepareResponse(500, { error: 'TMDB API key is not set' });
+        }
         // Search for the movie to get the ID
         const searchResponse = await axios.get(`${BASE_URL}search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`);
 

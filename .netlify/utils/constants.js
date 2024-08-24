@@ -1,9 +1,12 @@
-const TMDB_API_KEY = '2fb9673c2de3d5f1fb9f998dddbf34d7';
+const TMDB_API_ID = 'tmdb_api_id';
+const API_COLLECTION = 'api_keys'
 const BASE_URL = `https://api.themoviedb.org/3/`;
-
+const DEFAULT_LIMIT = 100;
 
 
 module.exports = {
-    TMDB_API_KEY,
-    BASE_URL
+    BASE_URL,
+    API_COLLECTION,
+    TMDB_API_ID,
+    DEFAULT_LIMIT
 }

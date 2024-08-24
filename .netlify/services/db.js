@@ -23,7 +23,7 @@ async function setMongoConnection() {
     }
 }
 
-async function getMovies(projections) {
+async function find(dbCollection, query, projections, limit) {
     try {
         // Connect the client to the server
         let client = await setMongoConnection();
@@ -31,16 +31,15 @@ async function getMovies(projections) {
         console.log('Connected successfully to MongoDB Atlas');
 
         // Specify the database and collection
-        const database = client.db('sample_mflix');
-        const collection = database.collection('movies');
+        const database = client.db('moviephobics');
+        const collection = database.collection(dbCollection);
 
-        // Query for documents
-        const query = {}; // Empty query to get all documents
+        // Empty query to get all documents
         const options = {
             projection: projections
         };
 
-        const cursor = collection.find(query, options).limit(500);
+        const cursor = collection.find(query, options).limit(limit);
 
         // Collect documents into an array
         const results = [];
@@ -56,4 +55,5 @@ async function getMovies(projections) {
     }
 }
 
-module.exports = { getMovies };
+
+module.exports = { find };
