@@ -31,7 +31,7 @@ async function find(dbCollection, query, projections, limit) {
         console.log('Connected successfully to MongoDB Atlas');
 
         // Specify the database and collection
-        const database = client.db('moviephobics');
+        const database = client.db('movie_phobics');
         const collection = database.collection(dbCollection);
 
         // Empty query to get all documents
