@@ -63,7 +63,7 @@ jobs:
 
   create-release:
     runs-on: ubuntu-latest
-    needs: build
+    needs: deploy-dev
     if: github.ref == 'refs/heads/main' && success()
     steps:
       - name: Checkout code
@@ -129,7 +129,7 @@ jobs:
 
   deploy-prod:
     runs-on: ubuntu-latest
-    needs: build
+    needs: create-release
     environment: prod
     if: github.ref == 'refs/heads/main' && success()
     steps:
