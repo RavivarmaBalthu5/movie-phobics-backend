@@ -15,7 +15,7 @@ const searchMovie = async (movieName) => {
         searchResponse = await find(MOVIE_COLLECTION, { "title": new RegExp(movieName, 'i') }, null, DEFAULT_LIMIT)
         console.log(`searchResponse: ${JSON.stringify(searchResponse)}`);
         if (_.isEmpty(searchResponse)) {
-            let response = await axios.get(`${BASE_URL}search/movie?api_key=${TMDB_API_KEY[0]?.api_key}&query=${encodeURIComponent(movieName)}`);
+            let response = await axios.get(`${BASE_URL}search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`);
             searchResponse = response?.data.results;
             console.log(`searchResponse2: ${JSON.stringify(searchResponse)}`);
             await upsertDocuments(MOVIE_COLLECTION, searchResponse, 'id')

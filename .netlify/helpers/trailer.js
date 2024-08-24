@@ -14,7 +14,7 @@ const fetchTrailer = async (movieId) => {
         console.log(`searchResponse: ${JSON.stringify(searchResponse)}`);
         // Search for the movie video data
         if (isEmpty(searchResponse)) {
-            const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${TMDB_API_KEY[0]?.api_key}`);
+            const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${TMDB_API_KEY}`);
             searchResponse = response?.data;
             console.log(`searchResponse2: ${JSON.stringify(searchResponse)}`);
             if (!isEmpty(searchResponse)) {
