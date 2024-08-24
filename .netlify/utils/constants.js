@@ -1,7 +1,7 @@
 const TMDB_API_ID = 'tmdb_api_id';
 const API_COLLECTION = 'api_keys'
 const BASE_URL = `https://api.themoviedb.org/3/`;
-const DEFAULT_LIMIT = 10;
+const DEFAULT_LIMIT = 50;
 const MOVIE_COLLECTION = 'movies';
 const TRAILERS_COLLECTION = 'trailers';
 

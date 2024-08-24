@@ -11,8 +11,10 @@ const fetchTrailer = async (movieIdString) => {
         const movieId = parseInt(movieIdString, 10);
         const TMDB_API_KEY = await getTMDBApiKey();
         // Search for the movie to get the ID
-        searchResponse = await find(TRAILERS_COLLECTION, { "movieId": movieId }, null, DEFAULT_LIMIT)
+        searchResponse = await find(TRAILERS_COLLECTION, { "movieId": movieId }, { "results.key": 1, "results.type": 1 }, DEFAULT_LIMIT)
         // Search for the movie video data
+        console.log(searchResponse);
+
         if (isEmpty(searchResponse)) {
             const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${TMDB_API_KEY}`);
             if (!isEmpty(response.data)) {
