@@ -1,5 +1,5 @@
 const { find } = require("../services/db");
-const { BASE_URL, API_COLLECTION, TMDB_API_ID } = require("../utils/constants");
+const { BASE_URL, API_COLLECTION, TMDB_API_ID, DEFAULT_LIMIT } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 const axios = require('axios');
 
