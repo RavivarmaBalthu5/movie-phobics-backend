@@ -136,9 +136,9 @@ jobs:
 
       - name: Deploy to Netlify Production
         run: |
-          netlify deploy --prod --dir=public --site=$NETLIFY_PROD_SITE_ID
+          netlify deploy --prod --dir=public --site=$NETLIFY_SITE_ID
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_PROD_SITE_ID: ${{ secrets.NETLIFY_PROD_SITE_ID }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
 

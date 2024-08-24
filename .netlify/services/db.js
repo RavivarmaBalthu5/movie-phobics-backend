@@ -24,7 +24,7 @@ async function setMongoConnection() {
     }
 }
 
-async function find(dbCollection, query, projections, limit) {
+async function find(dbCollection, query, projections, limit = 10) {
     try {
         // Connect the client to the server
         let client = await setMongoConnection();
@@ -46,7 +46,6 @@ async function find(dbCollection, query, projections, limit) {
         // Collect documents into an array
         const results = [];
         await cursor.forEach(doc => results.push(doc));
-
         return results;
     } catch (err) {
         console.error('Error retrieving data:', err);

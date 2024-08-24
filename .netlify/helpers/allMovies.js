@@ -1,10 +1,10 @@
 const { find } = require("../services/db");
-const { DEFAULT_LIMIT, MOVIE_COLLECCTION } = require("../utils/constants");
+const { DEFAULT_LIMIT, MOVIE_COLLECTION } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 
 const getInitialMovies = async () => {
     try {
-        let searchResponse = await find(MOVIE_COLLECCTION, {}, null, DEFAULT_LIMIT);
+        let searchResponse = await find(MOVIE_COLLECTION, {}, null, DEFAULT_LIMIT);
         if (searchResponse === 0) {
             return prepareResponse(400, { error: 'Movies not found' })
         }
