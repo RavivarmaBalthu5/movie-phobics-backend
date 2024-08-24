@@ -10,7 +10,7 @@ const searchMovie = async (movieName) => {
         let searchResponse;
         const TMDB_API_KEY = await getTMDBApiKey()
         // Search for the movie to get the ID
-        searchResponse = await find(MOVIE_COLLECTION, { "title": new RegExp(movieName, 'i') }, { "title": 1, "poster_path": 1, "id": 1, "release_date": 1 }, DEFAULT_LIMIT)
+        searchResponse = await find(MOVIE_COLLECTION, { "title": new RegExp(movieName, 'i') }, { "title": 1,"overview" : 1, "poster_path": 1, "id": 1, "release_date": 1 }, DEFAULT_LIMIT)
         if (_.isEmpty(searchResponse)) {
             let response = await axios.get(`${BASE_URL}search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`);
             searchResponse = response?.data.results;
