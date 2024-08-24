@@ -65,20 +65,12 @@ async function upsertDocuments(collectionName, documents, queryParam) {
         // Specify the database and collection
         const database = client.db('movie_phobics');
         const collection = database.collection(collectionName);
-        const options = { upsert: true };
-        if (isEqual(queryParam, 'movieId')) {
-            documents.createdDate = new Date();
-            const query = { [queryParam]: documents.id };
-            const update = { $set: documents };
+        for (const doc of documents) {
+            doc.createdDate = new Date();
+            const query = { [queryParam]: doc.id }; // Adjust query based on unique identifier
+            const options = { upsert: true };
+            const update = { $set: doc };
             await collection.updateOne(query, update, options);
-        }
-        else {
-            for (const doc of documents) {
-                doc.createdDate = new Date();
-                const query = { [queryParam]: doc.id }; // Adjust query based on unique identifier
-                const update = { $set: doc };
-                await collection.updateOne(query, update, options);
-            }
         }
     } finally {
         await client.close();
