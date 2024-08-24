@@ -24,7 +24,7 @@ async function setMongoConnection() {
     }
 }
 
-async function find(dbCollection, query, projections, limit) {
+async function find(dbCollection, query, projections, limit = 5) {
     try {
         // Connect the client to the server
         let client = await setMongoConnection();

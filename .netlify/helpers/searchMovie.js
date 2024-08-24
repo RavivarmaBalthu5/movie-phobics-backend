@@ -1,5 +1,6 @@
+const { getTMDBApiKey } = require("../services/apiService");
 const { find, upsertDocuments } = require("../services/db");
-const { BASE_URL, API_COLLECTION, TMDB_API_ID, DEFAULT_LIMIT, MOVIE_COLLECCTION } = require("../utils/constants");
+const { BASE_URL, DEFAULT_LIMIT, MOVIE_COLLECCTION } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 const axios = require('axios');
 const _ = require('lodash')
@@ -7,10 +8,7 @@ const _ = require('lodash')
 const searchMovie = async (movieName) => {
     try {
         let searchResponse;
-        const TMDB_API_KEY = await find(API_COLLECTION, { "_id": TMDB_API_ID }, null, DEFAULT_LIMIT)
-        if (!TMDB_API_KEY) {
-            return prepareResponse(500, { error: 'TMDB API key is not set' });
-        }
+        const TMDB_API_KEY = await getTMDBApiKey()
         // Search for the movie to get the ID
         console.log(`TMDB_API_KEY: ${JSON.stringify(TMDB_API_KEY)}`);
 

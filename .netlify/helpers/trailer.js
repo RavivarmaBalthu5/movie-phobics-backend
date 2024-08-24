@@ -1,16 +1,14 @@
 const { isEmpty } = require("lodash");
 const { find, upsertDocuments } = require("../services/db");
-const { BASE_URL, TMDB_API_ID, API_COLLECTION, DEFAULT_LIMIT, TRAILERS_COLLECCTION } = require("../utils/constants");
+const { BASE_URL, DEFAULT_LIMIT, TRAILERS_COLLECCTION } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 const axios = require('axios');
+const { getTMDBApiKey } = require("../services/apiService");
 
 const fetchTrailer = async (movieId) => {
     try {
         let searchResponse;
-        const TMDB_API_KEY = await find(API_COLLECTION, { "_id": TMDB_API_ID }, null, DEFAULT_LIMIT)
-        if (!TMDB_API_KEY) {
-            return prepareResponse(500, { error: 'TMDB API key is not set' });
-        }
+        const TMDB_API_KEY = await getTMDBApiKey();
         // Search for the movie to get the ID
         searchResponse = await find(TRAILERS_COLLECCTION, { "movieId": movieId }, null, DEFAULT_LIMIT)
         // Search for the movie video data
