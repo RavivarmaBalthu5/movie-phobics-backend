@@ -1,3 +1,4 @@
+const { isEqual } = require('lodash');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://Ravivarma:RavivarmaMongo@movie-phobics.x3v8z.mongodb.net/?retryWrites=true&w=majority&appName=movie-phobics"
 
@@ -23,7 +24,7 @@ async function setMongoConnection() {
     }
 }
 
-async function getMovies(projections) {
+async function find(dbCollection, query, projections, limit) {
     try {
         // Connect the client to the server
         let client = await setMongoConnection();
@@ -31,16 +32,16 @@ async function getMovies(projections) {
         console.log('Connected successfully to MongoDB Atlas');
 
         // Specify the database and collection
-        const database = client.db('sample_mflix');
-        const collection = database.collection('movies');
+        const database = client.db('movie_phobics');
+        const collection = database.collection(dbCollection);
 
-        // Query for documents
-        const query = {}; // Empty query to get all documents
+        // Empty query to get all documents
         const options = {
-            projection: projections
+            projection: projections,
+            sort: { createdDate: -1 }
         };
 
-        const cursor = collection.find(query, options).limit(500);
+        const cursor = collection.find(query, options).limit(limit);
 
         // Collect documents into an array
         const results = [];
@@ -56,4 +57,33 @@ async function getMovies(projections) {
     }
 }
 
-module.exports = { getMovies };
+async function upsertDocuments(collectionName, documents, queryParam) {
+
+    try {
+        let client = await setMongoConnection();
+        await client.connect();
+        console.log('Connected successfully to MongoDB Atlas', queryParam);
+        // Specify the database and collection
+        const database = client.db('movie_phobics');
+        const collection = database.collection(collectionName);
+        const options = { upsert: true };
+        if (isEqual(queryParam, 'movieId')) {
+            const query = { [queryParam]: documents.id };
+            const update = { $set: documents };
+            await collection.updateOne(query, update, options);
+        }
+        else {
+            for (const doc of documents) {
+                doc.createdDate = new Date();
+                const query = { [queryParam]: doc.id }; // Adjust query based on unique identifier
+                const update = { $set: doc };
+                await collection.updateOne(query, update, options);
+            }
+        }
+    } finally {
+        await client.close();
+    }
+}
+
+
+module.exports = { find, upsertDocuments };

@@ -23,8 +23,8 @@
     "node": "18.x"
   },
   "dependencies": {
-    "mongodb": "^6.8.0",
+    "axios": "^1.7.4",
     "lodash": "^4.17.21",
-"axios": "^1.7.4"
+    "mongodb": "^6.8.0"
   }
 }
