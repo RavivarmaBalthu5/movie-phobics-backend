@@ -11,10 +11,12 @@ const fetchTrailer = async (movieId) => {
         const TMDB_API_KEY = await getTMDBApiKey();
         // Search for the movie to get the ID
         searchResponse = await find(TRAILERS_COLLECCTION, { "movieId": movieId }, null, DEFAULT_LIMIT)
+        console.log(`searchResponse: ${JSON.stringify(searchResponse)}`);
         // Search for the movie video data
         if (isEmpty(searchResponse)) {
             const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${TMDB_API_KEY[0]?.api_key}`);
             searchResponse = response?.data;
+            console.log(`searchResponse2: ${JSON.stringify(searchResponse)}`);
             if (!isEmpty(searchResponse)) {
                 await upsertDocuments(TRAILERS_COLLECCTION, searchResponse, 'movieId')
             }
@@ -22,6 +24,7 @@ const fetchTrailer = async (movieId) => {
         if (searchResponse === 0) {
             return prepareResponse(400, { error: 'Movie videos not found' })
         }
+        console.log(`searchResponse3: ${JSON.stringify(searchResponse)}`);
         return prepareResponse(200, searchResponse.results);
 
     } catch (error) {
