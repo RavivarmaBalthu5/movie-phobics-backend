@@ -5,12 +5,12 @@ const axios = require('axios');
 
 const fetchTrailer = async (movieId) => {
     try {
-        const TMDB_API_KEY = await find(API_COLLECTION, { "_id": TMDB_API_ID }, null, DEFAULT_LIMIT)[0]?.api_key;
+        const TMDB_API_KEY = await find(API_COLLECTION, { "_id": TMDB_API_ID }, null, DEFAULT_LIMIT)
         if (!TMDB_API_KEY) {
             return prepareResponse(500, { error: 'TMDB API key is not set' });
         }
         // Search for the movie video data
-        const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${TMDB_API_KEY}`);
+        const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${TMDB_API_KEY[0]?.api_key}`);
 
         if (response.data.results.length === 0) {
             return prepareResponse(400, { error: 'Movie videos not found' })

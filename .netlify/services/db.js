@@ -39,13 +39,8 @@ async function find(dbCollection, query, projections, limit) {
             projection: projections
         };
 
-        const cursor = collection.find(query, options).limit(limit);
+        return collection.find(query, options).limit(limit);
 
-        // Collect documents into an array
-        const results = [];
-        await cursor.forEach(doc => results.push(doc));
-
-        return results;
     } catch (err) {
         console.error('Error retrieving data:', err);
         throw err; // Rethrow the error to handle it in the calling function
