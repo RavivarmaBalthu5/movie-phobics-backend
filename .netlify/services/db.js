@@ -88,4 +88,15 @@ async function closeMongoClient() {
     }
 }
 
+// Handle graceful shutdown
+process.on('SIGINT', async () => {
+    await closeMongoClient();
+    process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+    await closeMongoClient();
+    process.exit(0);
+});
+
 module.exports = { find, upsertDocuments, closeMongoClient };

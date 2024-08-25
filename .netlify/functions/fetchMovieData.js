@@ -27,7 +27,4 @@ exports.handler = async (event, context) => {
   } catch (e) {
     return prepareResponse(500, e.message)
   }
-  finally {
-    await closeMongoClient()
-  }
 };
