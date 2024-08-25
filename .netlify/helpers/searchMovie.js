@@ -1,6 +1,6 @@
 const { getTMDBApiKey } = require("../services/apiService");
 const { find, upsertDocuments } = require("../services/db");
-const { BASE_URL, DEFAULT_LIMIT, MOVIE_COLLECTION } = require("../utils/constants");
+const { BASE_URL, DEFAULT_LIMIT, MOVIE_COLLECTION, SEARCH_MOVIE_SORT_ORDER, SEARCH_MOVIE_PROJECTIONS } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 const axios = require('axios');
 const _ = require('lodash')
@@ -10,7 +10,7 @@ const searchMovie = async (movieName) => {
         let searchResponse;
         const TMDB_API_KEY = await getTMDBApiKey()
         // Search for the movie to get the ID
-        searchResponse = await find(MOVIE_COLLECTION, { "title": new RegExp(movieName, 'i') }, { "title": 1,"overview" : 1, "poster_path": 1, "id": 1, "release_date": 1 }, DEFAULT_LIMIT)
+        searchResponse = await find(MOVIE_COLLECTION, { "title": new RegExp(movieName, 'i') }, SEARCH_MOVIE_PROJECTIONS, SEARCH_MOVIE_SORT_ORDER, DEFAULT_LIMIT)
         if (_.isEmpty(searchResponse)) {
             let response = await axios.get(`${BASE_URL}search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`);
             searchResponse = response?.data.results;
