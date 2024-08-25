@@ -14,7 +14,7 @@ async function getTMDBApiKey() {
     console.log(`getting api key from db`);
 
     // If not in cache, fetch from database
-    const apiKey = await find(API_COLLECTION, { "_id": TMDB_API_ID }, null, DEFAULT_LIMIT);
+    const apiKey = await find(API_COLLECTION, { "_id": TMDB_API_ID }, {}, {}, DEFAULT_LIMIT);
 
     if (!apiKey || apiKey.length === 0) {
         throw new Error('TMDB API key is not set');
