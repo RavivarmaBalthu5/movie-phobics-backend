@@ -1,38 +1,36 @@
+const { isEqual } = require('lodash');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://Ravivarma:RavivarmaMongo@movie-phobics.x3v8z.mongodb.net/?retryWrites=true&w=majority&appName=movie-phobics"
 
-// Create a single MongoClient instance
-let client;
-
-const initializeMongoClient = async () => {
-    if (!client) {
-        client = new MongoClient(uri, {
-            serverApi: {
-                version: ServerApiVersion.v1,
-                strict: true,
-                deprecationErrors: true,
-            }
-        });
-
-        try {
-            await client.connect();
-            console.log('Connected successfully to MongoDB Atlas');
-        } catch (err) {
-            console.error('Error connecting to MongoDB Atlas', err);
-            throw err;
-        }
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
     }
-};
+});
 
-// Immediately invoke the function to initialize MongoClient
-(async () => {
-    await initializeMongoClient();
-})();
+async function setMongoConnection() {
+    try {
+        // Connect the client to the server
+        return await client.connect();
+    } catch (err) {
+        console.error('Error connecting to MongoDB Atlas', err);
+        throw err; // Rethrow the error to handle it in the calling function
+    } finally {
+        // Close the connection
+        await client.close();
+    }
+}
 
 async function find(dbCollection, query, projections = {}, sort = {}, limit = 10) {
-    await initializeMongoClient(); // Ensure client is connected
-
     try {
+        // Connect the client to the server
+        let client = await setMongoConnection();
+        await client.connect();
+        console.log('Connected successfully to MongoDB Atlas');
+
         // Specify the database and collection
         const database = client.db('movie_phobics');
         const collection = database.collection(dbCollection);
@@ -51,52 +49,33 @@ async function find(dbCollection, query, projections = {}, sort = {}, limit = 10
         return results;
     } catch (err) {
         console.error('Error retrieving data:', err);
-        throw err;
+        throw err; // Rethrow the error to handle it in the calling function
+    } finally {
+        // Close the connection
+        await client.close();
     }
 }
 
 async function upsertDocuments(collectionName, documents, queryParam) {
-    await initializeMongoClient(); // Ensure client is connected
 
     try {
+        let client = await setMongoConnection();
+        await client.connect();
+        console.log('Connected successfully to MongoDB Atlas', queryParam);
         // Specify the database and collection
         const database = client.db('movie_phobics');
         const collection = database.collection(collectionName);
-
         for (const doc of documents) {
             doc.createdDate = new Date();
-            const query = { [queryParam]: doc[queryParam] }; // Adjust query based on unique identifier
+            const query = { [queryParam]: doc.id }; // Adjust query based on unique identifier
             const options = { upsert: true };
             const update = { $set: doc };
             await collection.updateOne(query, update, options);
         }
-    } catch (err) {
-        console.error('Error upserting documents:', err);
-        throw err;
+    } finally {
+        await client.close();
     }
 }
 
-// Close the client connection when your application shuts down
-async function closeMongoClient() {
-    try {
-        if (client) {
-            await client.close();
-            console.log('MongoDB connection closed');
-        }
-    } catch (err) {
-        console.error('Error closing MongoDB connection', err);
-    }
-}
 
-// Handle graceful shutdown
-process.on('SIGINT', async () => {
-    await closeMongoClient();
-    process.exit(0);
-});
-
-process.on('SIGTERM', async () => {
-    await closeMongoClient();
-    process.exit(0);
-});
-
-module.exports = { find, upsertDocuments, closeMongoClient };
+module.exports = { find, upsertDocuments };

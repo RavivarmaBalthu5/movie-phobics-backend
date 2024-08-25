@@ -1,10 +1,8 @@
 const TMDB_API_ID = 'tmdb_api_id';
-const GOOGLE_YOUTUBE_API_ID = 'youtube_api_key';
 const API_COLLECTION = 'api_keys'
 const BASE_URL = `https://api.themoviedb.org/3/`;
 const DEFAULT_LIMIT = 100;
 const MOVIE_COLLECTION = 'movies';
-const MOVIE_VIDEOS_COLLECTION = 'movie_videos'
 const TRAILERS_COLLECTION = 'trailers';
 const ALL_MOVIES_SORT_ORDER = { "release_date": -1, "createdDate": -1 };
 const ALL_MOVIES_PROJECTIONS = { "title": 1, "overview": 1, "poster_path": 1, "id": 1, "release_date": 1, "vote_average": 1, "overview": 1, "original_title": 1 };
@@ -12,8 +10,7 @@ const SEARCH_MOVIE_SORT_ORDER = { "release_date": -1, "createdDate": -1 };
 const SEARCH_MOVIE_PROJECTIONS = { "title": 1, "overview": 1, "poster_path": 1, "id": 1, "release_date": 1, "vote_average": 1, "overview": 1, "original_title": 1 };
 const TRAILERS_SORT_ORDER = {};
 const TRAILERS_PROJECTIONS = { "results.key": 1, "results.type": 1 };
-const GOOGLE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
-const YOUTUBE_BASE_URL = 'https://www.youtube.com';
+
 module.exports = {
     BASE_URL,
     API_COLLECTION,
@@ -26,9 +23,5 @@ module.exports = {
     SEARCH_MOVIE_PROJECTIONS,
     SEARCH_MOVIE_SORT_ORDER,
     TRAILERS_SORT_ORDER,
-    TRAILERS_PROJECTIONS,
-    GOOGLE_API_BASE_URL,
-    GOOGLE_YOUTUBE_API_ID,
-    YOUTUBE_BASE_URL,
-    MOVIE_VIDEOS_COLLECTION
+    TRAILERS_PROJECTIONS
 }
