@@ -2,6 +2,7 @@ const { getInitialMovies } = require('../helpers/allMovies');
 const { searchFullMovie } = require('../helpers/fullMovie');
 const { searchMovie } = require('../helpers/searchMovie');
 const { fetchTrailer } = require('../helpers/trailer');
+const { closeMongoClient } = require('../services/db');
 const { prepareResponse } = require('../utils/utils');
 
 exports.handler = async (event, context) => {
@@ -25,5 +26,8 @@ exports.handler = async (event, context) => {
     }
   } catch (e) {
     return prepareResponse(500, e.message)
+  }
+  finally {
+    await closeMongoClient()
   }
 };
