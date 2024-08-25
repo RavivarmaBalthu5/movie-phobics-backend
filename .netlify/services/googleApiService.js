@@ -45,7 +45,7 @@ exports.getVideoData = async (searchQuery, apiKey) => {
         const searchResponse = await axios.get(`${GOOGLE_API_BASE_URL}/search`, {
             params: {
                 part: 'id',
-                q: searchQuery,
+                q: encodeURIComponent(searchQuery),
                 type: 'video',
                 videoDuration: 'long',
                 key: apiKey
