@@ -23,8 +23,8 @@ const searchAudioTracks = async (track) => {
                 },
                 paramsSerializer: params => querystring.stringify(params),
             });
-            await upsertDocuments(TRACKS_COLLECTION, trackResponse.data.tracks.items, 'id')
             trackResponse = trackResponse.data.tracks.items
+            await upsertDocuments(TRACKS_COLLECTION, trackResponse, 'id')
         }
         return prepareResponse(200, trackResponse);
 
