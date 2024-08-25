@@ -2,17 +2,18 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://Ravivarma:RavivarmaMongo@movie-phobics.x3v8z.mongodb.net/?retryWrites=true&w=majority&appName=movie-phobics"
 
 // Create a single MongoClient instance
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-});
+let client;
 
-// Ensure the client is connected before any operation
-async function initializeMongoClient() {
-    if (!client.isConnected()) {
+const initializeMongoClient = async () => {
+    if (!client) {
+        client = new MongoClient(uri, {
+            serverApi: {
+                version: ServerApiVersion.v1,
+                strict: true,
+                deprecationErrors: true,
+            }
+        });
+
         try {
             await client.connect();
             console.log('Connected successfully to MongoDB Atlas');
@@ -21,9 +22,13 @@ async function initializeMongoClient() {
             throw err;
         }
     }
-}
+};
 
-// Find function with session management
+// // Immediately invoke the function to initialize MongoClient
+// (async () => {
+//     await initializeMongoClient();
+// })();
+
 async function find(dbCollection, query, projections = {}, sort = {}, limit = 10) {
     await initializeMongoClient(); // Ensure client is connected
 
@@ -50,7 +55,6 @@ async function find(dbCollection, query, projections = {}, sort = {}, limit = 10
     }
 }
 
-// Upsert function with session management
 async function upsertDocuments(collectionName, documents, queryParam) {
     await initializeMongoClient(); // Ensure client is connected
 
@@ -75,8 +79,10 @@ async function upsertDocuments(collectionName, documents, queryParam) {
 // Close the client connection when your application shuts down
 async function closeMongoClient() {
     try {
-        await client.close();
-        console.log('MongoDB connection closed');
+        if (client) {
+            await client.close();
+            console.log('MongoDB connection closed');
+        }
     } catch (err) {
         console.error('Error closing MongoDB connection', err);
     }
