@@ -24,10 +24,10 @@ const initializeMongoClient = async () => {
     }
 };
 
-// // Immediately invoke the function to initialize MongoClient
-// (async () => {
-//     await initializeMongoClient();
-// })();
+// Immediately invoke the function to initialize MongoClient
+(async () => {
+    await initializeMongoClient();
+})();
 
 async function find(dbCollection, query, projections = {}, sort = {}, limit = 10) {
     await initializeMongoClient(); // Ensure client is connected
