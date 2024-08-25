@@ -1,6 +1,6 @@
 const { isEmpty } = require("lodash");
 const { find, upsertDocuments } = require("../services/db");
-const { BASE_URL, DEFAULT_LIMIT, TRAILERS_COLLECTION } = require("../utils/constants");
+const { BASE_URL, DEFAULT_LIMIT, TRAILERS_COLLECTION, TRAILERS_PROJECTIONS, TRAILERS_SORT_ORDER } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 const axios = require('axios');
 const { getTMDBApiKey } = require("../services/apiService");
@@ -11,10 +11,7 @@ const fetchTrailer = async (movieIdString) => {
         const movieId = parseInt(movieIdString, 10);
         const TMDB_API_KEY = await getTMDBApiKey();
         // Search for the movie to get the ID
-        searchResponse = await find(TRAILERS_COLLECTION, { "movieId": movieId }, { "results.key": 1, "results.type": 1 }, DEFAULT_LIMIT)
-        // Search for the movie video data
-        console.log(searchResponse);
-
+        searchResponse = await find(TRAILERS_COLLECTION, { "movieId": movieId }, TRAILERS_PROJECTIONS, TRAILERS_SORT_ORDER, DEFAULT_LIMIT)
         if (isEmpty(searchResponse)) {
             const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${TMDB_API_KEY}`);
             if (!isEmpty(response.data)) {

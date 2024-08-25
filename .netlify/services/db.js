@@ -24,7 +24,7 @@ async function setMongoConnection() {
     }
 }
 
-async function find(dbCollection, query, projections, limit = 10) {
+async function find(dbCollection, query, projections = {}, sort = {}, limit = 10) {
     try {
         // Connect the client to the server
         let client = await setMongoConnection();
@@ -38,7 +38,7 @@ async function find(dbCollection, query, projections, limit = 10) {
         // Empty query to get all documents
         const options = {
             projection: projections,
-            sort: { createdDate: -1 }
+            sort: sort
         };
 
         const cursor = collection.find(query, options).limit(limit);
