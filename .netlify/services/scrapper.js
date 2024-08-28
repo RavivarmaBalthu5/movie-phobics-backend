@@ -6,7 +6,7 @@ exports.searchYouTube = async function (query) {
     let browser = null;
     try {
         browser = await puppeteer.launch({
-            executablePath: process.env.CHROME_EXECUTABLE_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+            executablePath: puppeteer.executablePath()
         });
 
         const page = await browser.newPage();
