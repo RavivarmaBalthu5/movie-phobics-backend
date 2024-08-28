@@ -5,7 +5,7 @@
   "main": ".netlify/functions/index.js",
   "scripts": {
     "build": "npm run install-playwright && npm install && npm run build:project",
-    "install-playwright": "node install-playwright.js",
+    "install-playwright": "node .netlify/services/install-playwright.js",
     "build:project": "echo 'Add your project build commands here'",
     "start": "node server.js"
   },
