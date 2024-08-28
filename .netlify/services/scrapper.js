@@ -7,8 +7,7 @@ exports.searchYouTube = async function (query) {
     let browser = null;
     try {
         browser = await puppeteer.launch({
-            args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
             executablePath: await chromium.executablePath, // Uses the Chromium provided by chrome-aws-lambda
             headless: chromium.headless,
         });
