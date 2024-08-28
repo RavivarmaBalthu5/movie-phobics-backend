@@ -5,7 +5,11 @@ exports.searchYouTube = async function (query) {
 
     let browser = null;
     try {
-        browser = await puppeteer.launch();
+        browser = await puppeteer.launch({
+            channel: 'chrome', // Specify the browser channel
+            headless: true,    // Set to false if you want a visible browser
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
 
         const page = await browser.newPage();
         await page.goto(searchUrl, { waitUntil: 'networkidle2' });
