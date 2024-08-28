@@ -5,7 +5,7 @@
   "main": ".netlify/functions/index.js",
   "scripts": {
     "prebuild": "echo \"No need for prebuild with Playwright\"",
-    "build": "npm run build",
+    "build": "npm install && npm run build",
     "build:netlify": "echo \"Build your project here\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
