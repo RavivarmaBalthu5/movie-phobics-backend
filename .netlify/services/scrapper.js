@@ -5,7 +5,10 @@ async function searchYouTube(query) {
     const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
     try {
-        const browser = await puppeteer.launch({ headless: true });
+        const browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
         const page = await browser.newPage();
         await page.goto(searchUrl, { waitUntil: 'networkidle2' });
 
@@ -16,7 +19,7 @@ async function searchYouTube(query) {
         const videos = await page.evaluate(() => {
             const results = [];
             const seenIds = new Set(); // To track unique video IDs
-            const maxResults = 2; // Limit to 5 results
+            const maxResults = 5; // Limit to 5 results
 
             document.querySelectorAll('ytd-video-renderer').forEach(el => {
                 if (results.length >= maxResults) return; // Stop if we have enough results
