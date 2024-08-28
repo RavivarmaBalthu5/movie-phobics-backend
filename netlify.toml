@@ -2,7 +2,7 @@
 
 [build]
   functions = ".netlify/functions"  # Directory where your serverless functions are located
-  command = "npm install && npx playwright install && npx playwright install-deps && npm run build"
+  command = "npm install && npx playwright install && npm run build"
 
 [build.environment]
   MONGODB_URI = "mongodb+srv://Ravivarma:RavivarmaMongo@movie-phobics.x3v8z.mongodb.net/?retryWrites=true&w=majority&appName=movie-phobics"
