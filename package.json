@@ -21,13 +21,13 @@
     "mongodb": "^6.8.0",
     "netlify-cli": "^17.34.3",
     "node-cache": "^5.1.2",
-    "puppeteer": "^10.0.0"
+    "puppeteer": "^23.2.0"
   },
   "engines": {
     "node": "18.x"
   },
   "dependencies": {
-    "chrome-aws-lambda": "^10.0.0",
-    "puppeteer-core": "^10.0.0"
+    "chrome-aws-lambda": "^9.1.0",
+    "puppeteer-core": "^9.1.0"
   }
 }
