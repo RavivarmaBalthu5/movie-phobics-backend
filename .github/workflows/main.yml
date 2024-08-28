@@ -29,7 +29,7 @@ jobs:
         run: npm install
 
       - name: Install Puppeteer Chromium
-        run: npx puppeteer browsers install chrome@123.0.6312.122
+        run: npx puppeteer-core install chrome@123.0.6312.122
 
       - name: Install system dependencies
         run: |

@@ -18,7 +18,7 @@ exports.handler = async (event, context) => {
       return await searchMovie(movieName)
     }
     if (trailerMovieId) {
-      return await fetchTrailer(trailerMovieId)
+      return await fetchTrailer(trailerMovieId);
     }
     if (trackName) {
       return await searchAudioTracks(trackName);
