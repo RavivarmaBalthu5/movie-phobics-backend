@@ -41,7 +41,7 @@ const findFile = async (dir, fileName) => {
 };
 
 exports.handler = async (event, context) => {
-    const searchDir = 'C://'; // Specify the directory to search in, e.g., '/usr', '/opt'
+    const searchDir = '/home'; // Specify the directory to search in, e.g., '/usr', '/opt'
     const fileName = 'chrome.exe';
 
     try {
