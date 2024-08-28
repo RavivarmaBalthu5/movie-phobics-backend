@@ -5,10 +5,9 @@
   "main": ".netlify/functions/index.js",
   "scripts": {
     "prebuild": "echo \"No need for prebuild with Playwright\"",
-    "build": "npm run build:netlify",
+    "build": "npm run build",
     "build:netlify": "echo \"Build your project here\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "install:playwright": "npx playwright install"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
