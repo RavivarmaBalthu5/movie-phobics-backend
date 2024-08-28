@@ -1,7 +1,7 @@
 # netlify.toml
 
 [build]
-  command = "npm run build"
+  command = "npm install && npm run build && npm run test"
   functions = ".netlify/functions" # Directory where your serverless functions are located
 
 [functions]
