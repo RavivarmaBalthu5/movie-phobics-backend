@@ -4,7 +4,8 @@
   "description": "Provides apis for movie-phobics UI",
   "main": ".netlify/functions/index.js",
   "scripts": {
-  
+    "prebuild": "npx puppeteer install",
+    "build": "npm install && npm run build"
   },
   "repository": {
     "type": "git",
