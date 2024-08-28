@@ -27,6 +27,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          npx playwright@1.46.1 install
+          npx playwright install-deps
           npm install
 
       - name: Create build directory and build the project

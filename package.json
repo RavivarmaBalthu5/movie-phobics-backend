@@ -4,9 +4,8 @@
   "description": "Provides apis for movie-phobics UI",
   "main": ".netlify/functions/index.js",
   "scripts": {
-    "build": "npm run install-playwright && npm run build:netlify",
-    "install-playwright": "npx playwright install && npx playwright install-deps",
-    "build:netlify": "echo \"Running build for Netlify\""
+    "build": "npm run install-playwright",
+    "install-playwright": "npx playwright@1.46.1 install && npx playwright install-deps && npm install"
   },
   "repository": {
     "type": "git",
@@ -30,8 +29,6 @@
     "node": "18.x"
   },
   "dependencies": {
-    "@puppeteer/browsers": "^2.3.1",
-    "playwright": "^1.46.1",
-    "puppeteer": "^23.2.0"
+    "playwright": "^1.46.1"
   }
 }
