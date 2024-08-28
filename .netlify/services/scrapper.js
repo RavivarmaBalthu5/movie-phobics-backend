@@ -1,35 +1,43 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+const puppeteer = require('puppeteer');
 
 async function searchYouTube(query) {
     const encodedQuery = encodeURIComponent(query);
     const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
     try {
-        // Fetch HTML content from YouTube
-        const { data } = await axios.get(searchUrl);
-        const $ = cheerio.load(data);
+        const browser = await puppeteer.launch({ headless: true });
+        const page = await browser.newPage();
+        await page.goto(searchUrl, { waitUntil: 'networkidle2' });
 
-        const videos = [];
-        const seenIds = new Set();
-        const maxResults = 5;
+        // Wait for results to load
+        await page.waitForSelector('ytd-video-renderer', { timeout: 10000 });
 
-        $('ytd-video-renderer').each((index, element) => {
-            if (videos.length >= maxResults) return;
+        const videos = await page.evaluate(() => {
+            const results = [];
+            const seenIds = new Set();
+            const maxResults = 5;
 
-            const anchor = $(element).find('a#thumbnail');
-            const titleElement = $(element).find('#video-title');
-            const href = anchor.attr('href');
-            const title = titleElement.text().trim();
-            const idMatch = href.match(/\/watch\?v=([^&]+)/);
-            const id = idMatch ? idMatch[1] : null;
+            document.querySelectorAll('ytd-video-renderer').forEach(el => {
+                if (results.length >= maxResults) return;
 
-            if (title && id && !seenIds.has(id)) {
-                seenIds.add(id);
-                videos.push({ _id: id, title });
-            }
+                const anchor = el.querySelector('a#thumbnail');
+                const titleElement = el.querySelector('#video-title');
+                const href = anchor ? anchor.getAttribute('href') : '';
+                const title = titleElement ? titleElement.innerText.trim() : '';
+                const idMatch = href ? href.match(/\/watch\?v=([^&]+)/) : null;
+                const id = idMatch ? idMatch[1] : null;
+
+                if (title && id && !seenIds.has(id)) {
+                    seenIds.add(id);
+                    results.push({ _id: id, title });
+                }
+            });
+
+            return results;
         });
 
+        await browser.close();
+        console.log('Extracted videos:', videos);
         return videos;
     } catch (error) {
         console.error('Error:', error);
