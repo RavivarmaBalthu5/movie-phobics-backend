@@ -5,7 +5,7 @@
   "main": ".netlify/functions/index.js",
   "scripts": {
     "build": "npm install",
-    "postinstall": "npx playwright install"
+    "postinstall": "npx playwright install --with-deps"
   },
   "repository": {
     "type": "git",
