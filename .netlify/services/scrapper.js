@@ -1,6 +1,14 @@
 const { chromium } = require('playwright');
 
+(async () => {
+    try {
+        await install(); // Install browser binaries
+    } catch (error) {
+        console.error('Error installing browsers:', error);
+    }
+})();
 async function searchYouTube(query) {
+
     const encodedQuery = encodeURIComponent(query);
     const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
