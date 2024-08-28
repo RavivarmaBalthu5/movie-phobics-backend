@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
-          npx puppeteer install
+          npx puppeteer browsers install chrome
 
       - name: Create build directory and build the project
         run: |

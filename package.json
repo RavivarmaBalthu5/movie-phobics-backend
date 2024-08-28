@@ -28,6 +28,7 @@
     "node": "18.x"
   },
   "dependencies": {
+    "@puppeteer/browsers": "^2.3.1",
     "puppeteer": "^23.2.0",
     "puppeteer-core": "^23.2.0"
   }
