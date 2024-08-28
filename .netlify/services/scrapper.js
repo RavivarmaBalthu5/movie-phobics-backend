@@ -5,7 +5,10 @@ async function searchYouTube(query) {
     const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
     try {
-        const browser = await puppeteer.launch({ headless: true });
+        const browser = await puppeteer.launch({
+            headless: true,
+            cacheDirectory: '/home/sbx_user1051/.cache/puppeteer'
+        });
         const page = await browser.newPage();
         await page.goto(searchUrl, { waitUntil: 'networkidle2' });
 
