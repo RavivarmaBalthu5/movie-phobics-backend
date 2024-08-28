@@ -10,7 +10,6 @@ const searchMovie = async (movieName) => {
         // Search for the movie to get the ID
         searchResponse = await find(MOVIE_COLLECTION, { "title": new RegExp(movieName, 'i') }, SEARCH_MOVIE_PROJECTIONS, SEARCH_MOVIE_SORT_ORDER, DEFAULT_LIMIT)
         if (_.isEmpty(searchResponse)) {
-            console.log(`${BASE_URL}search/movie?api_key=${API_KEY}&query=${encodeURIComponent(movieName)}`);
             let response = await axios.get(`${BASE_URL}search/movie?api_key=${API_KEY}&query=${encodeURIComponent(movieName)}`);
 
             searchResponse = response?.data.results;
