@@ -1,16 +1,14 @@
-const puppeteer = require('puppeteer');
+const { chromium } = require('playwright');
 
 async function searchYouTube(query) {
     const encodedQuery = encodeURIComponent(query);
     const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
     try {
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
+        // Launch browser in headless mode
+        const browser = await chromium.launch({ headless: true });
         const page = await browser.newPage();
-        await page.goto(searchUrl, { waitUntil: 'networkidle2' });
+        await page.goto(searchUrl, { waitUntil: 'networkidle' });
 
         // Scroll to load more results if needed
         await autoScroll(page);
@@ -39,6 +37,7 @@ async function searchYouTube(query) {
 
             return results;
         });
+
         await browser.close();
         return videos;
     } catch (error) {
@@ -67,4 +66,4 @@ async function autoScroll(page) {
 
 module.exports = {
     searchYouTube
-}
+};
