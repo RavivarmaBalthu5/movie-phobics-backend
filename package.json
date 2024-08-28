@@ -20,12 +20,14 @@
     "lodash": "^4.17.21",
     "mongodb": "^6.8.0",
     "netlify-cli": "^17.34.3",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "puppeteer": "^10.0.0"
   },
   "engines": {
     "node": "18.x"
   },
   "dependencies": {
-    "puppeteer-core": "^10.4.0"
+    "chrome-aws-lambda": "^10.0.0",
+    "puppeteer-core": "^10.0.0"
   }
 }

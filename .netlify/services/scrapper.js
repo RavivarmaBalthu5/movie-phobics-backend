@@ -1,13 +1,12 @@
-const puppeteer = require('puppeteer-core');
+const chromium = require('chrome-aws-lambda');
 exports.searchYouTube = async function (query) {
     const encodedQuery = encodeURIComponent(query);
     const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
     let browser = null;
     try {
-        browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            headless: true,
+        browser = await chromium.puppeteer.launch({
+            executablePath: await chromium.executablePath,
         });
 
         const page = await browser.newPage();
