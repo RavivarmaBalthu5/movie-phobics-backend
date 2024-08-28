@@ -1,13 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 
+// Function to check if a file exists
 const fileExists = (filePath) => {
     return new Promise((resolve) => {
         fs.access(filePath, fs.constants.F_OK, (err) => resolve(!err));
     });
 };
 
-// Function to recursively search for a file and handle errors gracefully
+// Function to recursively search for a file
 const findFile = async (dir, fileName) => {
     let results = [];
     const queue = [dir];
@@ -28,7 +29,7 @@ const findFile = async (dir, fileName) => {
                         visited.add(fullPath);
                         queue.push(fullPath);
                     }
-                } else if (file === fileName) {
+                } else if (file.toLowerCase() === 'chrome' || file.toLowerCase() === 'chrome.exe') {
                     results.push(fullPath);
                 }
             }));
@@ -41,8 +42,8 @@ const findFile = async (dir, fileName) => {
 };
 
 exports.handler = async (event, context) => {
-    const searchDir = '/home'; // Specify the directory to search in, e.g., '/usr', '/opt'
-    const fileName = 'chrome.exe';
+    const searchDir = '/opt/build/repo'; // Use the build directory as the starting point
+    const fileName = 'chrome';
 
     try {
         const foundFiles = await findFile(searchDir, fileName);
