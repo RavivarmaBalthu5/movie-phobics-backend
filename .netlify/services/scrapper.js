@@ -1,19 +1,25 @@
-const puppeteer = require('puppeteer');
+const chromium = require('chrome-aws-lambda');
 
-async function searchYouTube(query) {
+exports.handler = async function (event, context) {
+    const query = event.queryStringParameters.query || 'default query';
     const encodedQuery = encodeURIComponent(query);
     const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
+    let browser = null;
     try {
-        const browser = await puppeteer.launch({
-            headless: true,
-            cacheDirectory: '/home/sbx_user1051/.cache/puppeteer'
+        browser = await chromium.puppeteer.launch({
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath,
+            headless: chromium.headless,
+            ignoreHTTPSErrors: true,
         });
+
         const page = await browser.newPage();
         await page.goto(searchUrl, { waitUntil: 'networkidle2' });
 
-        // Wait for results to load
-        await page.waitForSelector('ytd-video-renderer', { timeout: 10000 });
+        // Scroll to load more results if needed
+        await autoScroll(page);
 
         const videos = await page.evaluate(() => {
             const results = [];
@@ -27,7 +33,7 @@ async function searchYouTube(query) {
                 const titleElement = el.querySelector('#video-title');
                 const href = anchor ? anchor.getAttribute('href') : '';
                 const title = titleElement ? titleElement.innerText.trim() : '';
-                const idMatch = href ? href.match(/\/watch\?v=([^&]+)/) : null;
+                const idMatch = href.match(/\/watch\?v=([^&]+)/);
                 const id = idMatch ? idMatch[1] : null;
 
                 if (title && id && !seenIds.has(id)) {
@@ -39,15 +45,35 @@ async function searchYouTube(query) {
             return results;
         });
 
-        await browser.close();
-        console.log('Extracted videos:', videos);
-        return videos;
+        return {
+            statusCode: 200,
+            body: JSON.stringify(videos),
+        };
     } catch (error) {
-        console.error('Error:', error);
-        return [];
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message }),
+        };
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
     }
-}
-
-module.exports = {
-    searchYouTube
 };
+
+async function autoScroll(page) {
+    await page.evaluate(async () => {
+        const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+        const distance = 100;
+        const delayTime = 1000;
+
+        while (true) {
+            const scrollHeight = document.body.scrollHeight;
+            window.scrollBy(0, distance);
+
+            await delay(delayTime);
+
+            if (document.body.scrollHeight <= scrollHeight) break;
+        }
+    });
+}
