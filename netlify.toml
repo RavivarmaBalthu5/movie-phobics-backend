@@ -2,7 +2,16 @@
 
 [build]
   functions = ".netlify/functions"  # Directory where your serverless functions are located
+  command = "npm run build"
 
 [build.environment]
   MONGODB_URI = "mongodb+srv://Ravivarma:RavivarmaMongo@movie-phobics.x3v8z.mongodb.net/?retryWrites=true&w=majority&appName=movie-phobics"
   NODE_VERSION = "18"
+
+
+[build.environment]
+  PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "false"
+  PUPPETEER_CACHE_DIR = "/home/sbx_user1051/.cache/puppeteer"
+
+[[plugins]]
+  package = "@netlify/plugin-cache"
