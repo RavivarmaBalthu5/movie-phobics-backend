@@ -4,7 +4,7 @@
   "description": "Provides apis for movie-phobics UI",
   "main": ".netlify/functions/index.js",
   "scripts": {
-    "prebuild": "npx puppeteer install",
+    "prebuild": "echo \"No need for prebuild with chrome-aws-lambda\"",
     "build": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -30,8 +30,7 @@
     "node": "18.x"
   },
   "dependencies": {
-    "@puppeteer/browsers": "^2.3.1",
-    "puppeteer": "^23.2.0",
-    "puppeteer-core": "^23.2.0"
+    "chrome-aws-lambda": "^9.1.0",
+    "puppeteer-core": "^9.1.1"
   }
 }
