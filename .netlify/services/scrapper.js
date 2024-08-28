@@ -33,7 +33,7 @@ async function searchYouTube(query) {
 
                 if (title && id && !seenIds.has(id)) {
                     seenIds.add(id); // Mark this ID as seen
-                    results.push({ _id: id, title, url: `https://www.youtube.com${href}` });
+                    results.push({ _id: id, title });
                 }
             });
 
