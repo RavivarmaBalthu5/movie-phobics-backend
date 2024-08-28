@@ -97,15 +97,16 @@ async function upsertDocuments(collectionName, documents, queryParam) {
         const collection = database.collection(collectionName);
         for (const doc of documents) {
             doc.createdDate = new Date();
-            const query = { [queryParam]: doc.id }; // Adjust query based on unique identifier
+            const query = { [queryParam]: doc[queryParam] }; // Adjust query based on unique identifier
             const options = { upsert: true };
             const update = { $set: doc };
             await collection.updateOne(query, update, options);
         }
+        console.log('Successfully inserted to DB');
     } finally {
         await client.close();
     }
 }
 
 
-module.exports = { find, upsertDocuments ,aggregate};
+module.exports = { find, upsertDocuments, aggregate };

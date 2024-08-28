@@ -1,1 +1,5 @@
 node_modules
+.netlify/blobs-serve/*
+.netlify/functions-internal/*
+.netlify/v1/*
+.netlify/state.json
