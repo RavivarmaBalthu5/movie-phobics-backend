@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "Provides apis for movie-phobics UI",
   "main": ".netlify/functions/index.js",
-  "scripts": {
+ "scripts": {
     "prebuild": "echo \"No need for prebuild with Playwright\"",
-    "build": "npm run build:netlify",
+    "build": "npm run install:playwright && npm run build:netlify",
     "build:netlify": "echo \"Build your project here\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "install:playwright": "npx playwright install"
+    "install:playwright": "npx playwright install && npx playwright install-deps",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",

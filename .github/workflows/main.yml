@@ -28,7 +28,6 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
-          npx playwright install
 
       - name: Create build directory and build the project
         run: |
