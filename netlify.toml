@@ -1,7 +1,14 @@
 # netlify.toml
 
 [build]
-  functions = ".netlify/functions"  # Directory where your serverless functions are located
+  command = "npm run build"
+  functions = ".netlify/functions" # Directory where your serverless functions are located
+
+[functions]
+  directory = ".netlify/functions"
+
+  [functions.timeout]
+    duration = 20 # Timeout in seconds
 
 [build.environment]
   MONGODB_URI = "mongodb+srv://Ravivarma:RavivarmaMongo@movie-phobics.x3v8z.mongodb.net/?retryWrites=true&w=majority&appName=movie-phobics"

@@ -5,7 +5,7 @@
   "main": ".netlify/functions/index.js",
   "scripts": {
     "build": "npm run install-playwright",
-    "install-playwright": "npx playwright@1.46.1 install && npx playwright install-deps && npm install"
+  "install-playwright": "npx playwright install && npx playwright install-deps"
   },
   "repository": {
     "type": "git",
