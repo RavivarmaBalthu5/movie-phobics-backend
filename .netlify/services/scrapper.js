@@ -1,7 +1,6 @@
 const chromium = require('chrome-aws-lambda');
 
-exports.handler = async function (event, context) {
-    const query = event.queryStringParameters.query || 'default query';
+exports.searchYouTube = async function (query) {
     const encodedQuery = encodeURIComponent(query);
     const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
