@@ -4,8 +4,10 @@
   "description": "Provides apis for movie-phobics UI",
   "main": ".netlify/functions/index.js",
   "scripts": {
-    "build": "npm run install-playwright",
-    "install-playwright": "npx playwright@1.46.1 install && npx playwright install-deps && npm install"
+    "build": "npm run install-playwright && npm install && npm run build:project",
+    "install-playwright": "node install-playwright.js",
+    "build:project": "echo 'Add your project build commands here'",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
