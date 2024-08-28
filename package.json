@@ -26,6 +26,6 @@
     "node": "18.x"
   },
   "dependencies": {
-    "chrome-aws-lambda": "^9.1.0"
+    "puppeteer": "^23.2.0"
   }
 }

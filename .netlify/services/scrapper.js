@@ -1,18 +1,11 @@
-const chromium = require('chrome-aws-lambda');
-
+const puppeteer = require('puppeteer');
 exports.searchYouTube = async function (query) {
     const encodedQuery = encodeURIComponent(query);
     const searchUrl = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
     let browser = null;
     try {
-        browser = await chromium.puppeteer.launch({
-            args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath,
-            headless: chromium.headless,
-            ignoreHTTPSErrors: true,
-        });
+        browser = await puppeteer.launch();
 
         const page = await browser.newPage();
         await page.goto(searchUrl, { waitUntil: 'networkidle2' });
@@ -44,10 +37,7 @@ exports.searchYouTube = async function (query) {
             return results;
         });
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify(videos),
-        };
+        return videos;
     } catch (error) {
         return {
             statusCode: 500,
