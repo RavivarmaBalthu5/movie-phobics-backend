@@ -1,36 +1,67 @@
 const fs = require('fs');
 const path = require('path');
 
-// Function to check if a file exists
 const fileExists = (filePath) => {
     return new Promise((resolve) => {
         fs.access(filePath, fs.constants.F_OK, (err) => resolve(!err));
     });
 };
 
-// Possible paths to check for Chrome/Chromium
-const possiblePaths = [
-    '/bin/google-chrome',
-    '/bin/chromium-browser',
-    '/bin/chromium',
-    '/google/chrome/chrome',
-    '/chrome/chrome',
-    '/local/bin/chrome',
-    '/local/bin/chromium'
-];
+// Function to recursively search for a file and handle errors gracefully
+const findFile = async (dir, fileName) => {
+    let results = [];
+    const queue = [dir];
+    const visited = new Set();
 
-exports.handler = async function (event, context) {
-    let foundPath = 'Chrome/Chromium not found in common paths.';
+    while (queue.length > 0) {
+        const currentDir = queue.shift();
 
-    for (const p of possiblePaths) {
-        if (await fileExists(p)) {
-            foundPath = `Found Chrome/Chromium at: ${p}`;
-            break;
+        try {
+            const files = await fs.promises.readdir(currentDir);
+
+            await Promise.all(files.map(async (file) => {
+                const fullPath = path.join(currentDir, file);
+                const stat = await fs.promises.stat(fullPath);
+
+                if (stat.isDirectory()) {
+                    if (!visited.has(fullPath)) {
+                        visited.add(fullPath);
+                        queue.push(fullPath);
+                    }
+                } else if (file === fileName) {
+                    results.push(fullPath);
+                }
+            }));
+        } catch (error) {
+            console.error(`Error accessing directory ${currentDir}: ${error.message}`);
         }
     }
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify({ message: foundPath }),
-    };
+    return results;
+};
+
+exports.handler = async (event, context) => {
+    const searchDir = 'C://'; // Specify the directory to search in, e.g., '/usr', '/opt'
+    const fileName = 'chrome.exe';
+
+    try {
+        const foundFiles = await findFile(searchDir, fileName);
+
+        if (foundFiles.length > 0) {
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: `Found Chrome at: ${foundFiles.join(', ')}` }),
+            };
+        } else {
+            return {
+                statusCode: 200,
+                body: JSON.stringify({ message: 'Chrome/Chromium not found in the specified directory.' }),
+            };
+        }
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Error searching for Chrome/Chromium.' }),
+        };
+    }
 };
