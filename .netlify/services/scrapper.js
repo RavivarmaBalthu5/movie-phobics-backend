@@ -6,7 +6,7 @@ exports.searchYouTube = async function (query) {
     let browser = null;
     try {
         browser = await puppeteer.launch({
-            executablePath: process.env.CHROME_EXECUTABLE_PATH
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 
         const page = await browser.newPage();
