@@ -5,7 +5,7 @@
   "main": ".netlify/functions/index.js",
   "scripts": {
     "build": "npm run install-playwright",
-    "install-playwright": "bash scripts/install-browsers.sh"
+    "install-playwright": "bash .netlify/scripts/install-browsers.sh"
   },
   "repository": {
     "type": "git",
