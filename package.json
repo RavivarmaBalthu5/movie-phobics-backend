@@ -4,8 +4,7 @@
   "description": "Provides apis for movie-phobics UI",
   "main": ".netlify/functions/index.js",
   "scripts": {
-    "install-browsers": "bash .netlify/functions/install-browsers.sh",
-    "build": "npm install"
+  
   },
   "repository": {
     "type": "git",
