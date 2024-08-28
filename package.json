@@ -4,7 +4,8 @@
   "description": "Provides apis for movie-phobics UI",
   "main": ".netlify/functions/index.js",
   "scripts": {
-    "postinstall": "npx playwright install"
+    "postinstall": "npx playwright install",
+    "bulid": "npm run build && sudo npx playwright install-deps"
   },
   "repository": {
     "type": "git",
