@@ -4,7 +4,8 @@
   "description": "Provides apis for movie-phobics UI",
   "main": ".netlify/functions/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run install-playwright",
+    "install-playwright": "npx playwright@1.46.1 install && npx playwright install-deps && npm install"
   },
   "repository": {
     "type": "git",
@@ -17,17 +18,17 @@
   },
   "homepage": "https://github.com/RavivarmaBalthu5/movie-phobics-backend#readme",
   "devDependencies": {
-    "netlify-cli": "^12.0.0",
     "axios": "^1.7.4",
+    "cheerio": "^1.0.0",
     "lodash": "^4.17.21",
     "mongodb": "^6.8.0",
-    "node-cache": "^5.1.2",
-    "querystring": "^0.2.1"
+    "netlify-cli": "^17.34.3",
+    "node-cache": "^5.1.2"
   },
   "engines": {
     "node": "18.x"
   },
   "dependencies": {
-    
+    "playwright": "^1.46.1"
   }
 }

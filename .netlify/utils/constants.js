@@ -14,13 +14,6 @@ const TRAILERS_PROJECTIONS = { "results.key": 1, "results.type": 1 };
 const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const SPOTIFY_SEARCH_URL = 'https://api.spotify.com/v1/search';
 const TRACK_SEARCH_PROJECTION = {
-    "name": 1,
-    "uri": 1,
-    'external_urls.spotify': 1,
-    'album.name': 1,
-    'album.images.url': 1, // Access the first image URL
-    "preview_url": 1,
-    'href': 1
 };
 
 module.exports = {
