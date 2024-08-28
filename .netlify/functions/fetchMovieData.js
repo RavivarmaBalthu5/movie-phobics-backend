@@ -23,7 +23,7 @@ exports.handler = async (event, context) => {
     if (trackName) {
       return await searchAudioTracks(trackName);
     }
-    return prepareResponse(400, 'Missing query parameter')
+    return prepareResponse(400, 'Missing query parameter');
   } catch (e) {
     return prepareResponse(500, e.message)
   }
