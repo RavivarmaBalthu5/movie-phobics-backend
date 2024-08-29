@@ -8,7 +8,9 @@ exports.handler = async (event, context) => {
   const movieName = event.queryStringParameters.movie;
   const allMovies = event.queryStringParameters.allmovies;
   const trailerMovieId = event.queryStringParameters.trailer; //from UI we get movieId for trailer
-  const trackName = event.queryStringParameters.track;
+  const playlistId = event.queryStringParameters.tracksplaylistid;
+  const username = event.queryStringParameters.username;
+
 
   try {
     if (allMovies) {
@@ -20,8 +22,8 @@ exports.handler = async (event, context) => {
     if (trailerMovieId) {
       return await fetchTrailer(trailerMovieId);
     }
-    if (trackName) {
-      return await searchAudioTracks(trackName);
+    if (playlistId && username) {
+      return await searchAudioTracks(trackName, username);
     }
     return prepareResponse(400, 'Missing query parameter');
   } catch (e) {
