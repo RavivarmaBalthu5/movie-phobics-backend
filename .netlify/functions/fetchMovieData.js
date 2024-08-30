@@ -1,14 +1,14 @@
-const { getInitialMovies } = require('../helpers/allMovies');
-const { searchAudioTracks } = require('../helpers/audioTrack');
-const { searchMovie } = require('../helpers/searchMovie');
-const { fetchTrailer } = require('../helpers/trailer');
-const { prepareResponse } = require('../utils/utils');
+const { getAudioTracks, updateTrackIdInDB } = require("../helpers/audio");
+const { getInitialMovies, searchMovie, fetchTrailer } = require("../helpers/movies");
+const { prepareResponse } = require("../utils/utils");
+
 
 exports.handler = async (event, context) => {
   const movieName = event.queryStringParameters.movie;
   const allMovies = event.queryStringParameters.allmovies;
   const trailerMovieId = event.queryStringParameters.trailer; //from UI we get movieId for trailer
   const username = event.queryStringParameters.username;
+  const updateTrackId = event.queryStringParameters.updateTrackId;
 
 
   try {
@@ -21,8 +21,11 @@ exports.handler = async (event, context) => {
     if (trailerMovieId) {
       return await fetchTrailer(trailerMovieId);
     }
-    if (username) {
-      return await searchAudioTracks(username);
+    if (username && !updateTrackId) {
+      return await getAudioTracks(username);
+    }
+    if (updateTrackId && username) {
+      return await updateTrackIdInDB(updateTrackId, username)
     }
     return prepareResponse(400, 'Missing query parameter');
   } catch (e) {

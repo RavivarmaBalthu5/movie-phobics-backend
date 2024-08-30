@@ -11,6 +11,8 @@ const SEARCH_MOVIE_PROJECTIONS = { "title": 1, "overview": 1, "poster_path": 1, 
 const TRAILERS_SORT_ORDER = {};
 const TRAILERS_PROJECTIONS = { "results.key": 1, "results.type": 1 };
 const TRACK_SEARCH_PROJECTION = {
+    "tracks": 1,
+    "_id": 0
 };
 
 module.exports = {
