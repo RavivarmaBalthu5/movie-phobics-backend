@@ -1,7 +1,7 @@
 const { isEmpty } = require("lodash");
 const { find, upsertDocuments } = require("../services/db");
 const { TRACKS_COLLECTION, DEFAULT_LIMIT, TRACK_SEARCH_PROJECTION } = require("../utils/constants");
-const { prepareResponse, checkTrackIdPresentInDB } = require("../utils/utils");
+const { prepareResponse } = require("../utils/utils");
 const getAudioTracks = async (username) => {
     try {
         let tracksResponse = await find(TRACKS_COLLECTION, { "_id": username }, TRACK_SEARCH_PROJECTION, {}, DEFAULT_LIMIT)
