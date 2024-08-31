@@ -57,6 +57,7 @@ const deleteTrackIdInDB = async (username, trackId) => {
         }
         userTracks.splice(trackIndex, 1);
         tracksResponse[0].tracks = userTracks;
+        tracksResponse[0]._id = username;
         await upsertDocuments(TRACKS_COLLECTION, tracksResponse, "_id");
         return prepareResponse(200, tracksResponse[0].tracks);
 
