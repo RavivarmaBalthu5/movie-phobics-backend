@@ -1,5 +1,5 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = process.env.MONGODB_URI
+const uri = process.env.MONGODB_URI || "mongodb+srv://Ravivarma:RavivarmaMongo@movie-phobics.x3v8z.mongodb.net/?retryWrites=true&w=majority&appName=movie-phobics"
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 if (!uri) {
     throw new Error('MONGODB_URI is not defined');
