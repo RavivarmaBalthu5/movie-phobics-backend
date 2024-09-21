@@ -1,19 +1,27 @@
-const { DEFAULT_LIMIT, MOVIE_COLLECTION, ALL_MOVIES_SORT_ORDER, ALL_MOVIES_PROJECTIONS, SEARCH_MOVIE_PROJECTIONS, SEARCH_MOVIE_SORT_ORDER, BASE_URL, TRAILERS_COLLECTION, TRAILERS_PROJECTIONS, TRAILERS_SORT_ORDER } = require("../utils/constants");
+const { DEFAULT_LIMIT, MOVIE_COLLECTION, SEARCH_MOVIE_PROJECTIONS, SEARCH_MOVIE_SORT_ORDER, BASE_URL, TRAILERS_COLLECTION, TRAILERS_PROJECTIONS, TRAILERS_SORT_ORDER } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 const { isEmpty } = require("lodash");
 const { find, upsertDocuments } = require("../services/db");
 const axios = require('axios');
 const API_KEY = process.env.TMDB_API_KEY;
 
-const getInitialMovies = async () => {
+const getTotalPagesCount = async () => {
     try {
-        let searchResponse = await find(MOVIE_COLLECTION, {}, ALL_MOVIES_PROJECTIONS, ALL_MOVIES_SORT_ORDER, DEFAULT_LIMIT);
-        if (searchResponse === 0) {
-            return prepareResponse(400, { error: 'Movies not found' })
-        }
+        let response = await axios.get(`${BASE_URL}movie/now_playing?api_key=${API_KEY}&language=en-US`);
+        return prepareResponse(200, response?.data?.total_pages);
+    } catch (error) {
+        return prepareResponse(500, { error: 'Error fetching Total Pages', details: error.message });
+    }
+}
+
+const getCurrentPageMovies = async (currentPage) => {
+    try {
+        let response = await axios.get(`${BASE_URL}movie/now_playing?api_key=${API_KEY}&language=en-US&page=${currentPage}`);
+        searchResponse = response?.data?.results;
+        await upsertDocuments(MOVIE_COLLECTION, searchResponse, 'id')
         return prepareResponse(200, searchResponse);
     } catch (error) {
-        return prepareResponse(500, { error: 'Error fetching initial movie data', details: error.message });
+        return prepareResponse(500, { error: 'Error fetching current page movies', details: error.message });
     }
 }
 
@@ -66,5 +74,6 @@ const fetchTrailer = async (movieIdString) => {
 module.exports = {
     fetchTrailer,
     searchMovie,
-    getInitialMovies
+    getCurrentPageMovies,
+    getTotalPagesCount
 }

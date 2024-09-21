@@ -1,11 +1,12 @@
 const { getAudioTracks, updateTrackIdInDB, deleteTrackIdInDB } = require("../helpers/audio");
-const { getInitialMovies, searchMovie, fetchTrailer } = require("../helpers/movies");
+const { searchMovie, fetchTrailer, getTotalPagesCount, getCurrentPageMovies } = require("../helpers/movies");
 const { prepareResponse } = require("../utils/utils");
 
 
 exports.handler = async (event, context) => {
+  const totalPages = event.queryStringParameters.now_playing_total_pages
   const movieName = event.queryStringParameters.movie;
-  const allMovies = event.queryStringParameters.allmovies;
+  const nowPlayingCurrentPage = event.queryStringParameters.now_playing_current_page;
   const trailerMovieId = event.queryStringParameters.trailer; //from UI we get movieId for trailer
   const username = event.queryStringParameters.username;
   const updateTrackId = event.queryStringParameters.updateTrackId;
@@ -14,8 +15,11 @@ exports.handler = async (event, context) => {
 
 
   try {
-    if (allMovies) {
-      return await getInitialMovies()
+    if (totalPages) {
+      return await getTotalPagesCount();
+    }
+    if (nowPlayingCurrentPage) {
+      return await getCurrentPageMovies(nowPlayingCurrentPage)
     }
     if (movieName) {
       return await searchMovie(movieName)
