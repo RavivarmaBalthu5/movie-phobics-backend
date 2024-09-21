@@ -93,6 +93,8 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        run: npm install
       - name: Deploying to Production
         run: echo "Deploying to Production..."
       - name: Deploy to Production
