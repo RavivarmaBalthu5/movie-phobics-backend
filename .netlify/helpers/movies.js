@@ -48,23 +48,13 @@ const searchMovie = async (movieName) => {
 
 const fetchTrailer = async (movieIdString) => {
     try {
-        let searchResponse = [];
         const movieId = parseInt(movieIdString, 10);
         // Search for the movie to get the ID
-        searchResponse = await find(TRAILERS_COLLECTION, { "movieId": movieId }, TRAILERS_PROJECTIONS, TRAILERS_SORT_ORDER, DEFAULT_LIMIT)
-        if (isEmpty(searchResponse)) {
-            const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${API_KEY}`);
-            if (!isEmpty(response.data)) {
-                response.data.movieId = movieId;
-                searchResponse.push(response.data)
-                await upsertDocuments(TRAILERS_COLLECTION, searchResponse, 'movieId')
-            }
-        }
-
-        if (searchResponse === 0) {
+        const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${API_KEY}`);
+        if (isEmpty(response?.data.results)) {
             return prepareResponse(400, { error: 'Movie videos not found' })
         }
-        return prepareResponse(200, searchResponse[0].results);
+        return prepareResponse(200, response?.data.results);
 
     } catch (error) {
         return prepareResponse(500, { error: 'Error fetching movie videos', details: error.message });
