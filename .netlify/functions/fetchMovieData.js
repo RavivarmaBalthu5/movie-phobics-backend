@@ -1,4 +1,3 @@
-const { getAudioTracks, updateTrackIdInDB, deleteTrackIdInDB } = require("../helpers/audio");
 const { searchMovie, fetchTrailer, getTotalPagesCount, getCurrentPageMovies } = require("../helpers/movies");
 const { prepareResponse } = require("../utils/utils");
 
@@ -8,11 +7,6 @@ exports.handler = async (event, context) => {
   const movieName = event.queryStringParameters.movie;
   const nowPlayingCurrentPage = event.queryStringParameters.now_playing_current_page;
   const trailerMovieId = event.queryStringParameters.trailer; //from UI we get movieId for trailer
-  const username = event.queryStringParameters.username;
-  const updateTrackId = event.queryStringParameters.updateTrackId;
-  const updateTrackTitle = event.queryStringParameters.updateTrackTitle;
-  const deleteTrackId = event.queryStringParameters.deleteTrackId
-
 
   try {
     if (totalPages) {
@@ -26,15 +20,6 @@ exports.handler = async (event, context) => {
     }
     if (trailerMovieId) {
       return await fetchTrailer(trailerMovieId);
-    }
-    if (username && !updateTrackId && !updateTrackTitle && !deleteTrackId) {
-      return await getAudioTracks(username);
-    }
-    if (updateTrackId && username && updateTrackTitle) {
-      return await updateTrackIdInDB(updateTrackId, username, updateTrackTitle)
-    }
-    if (deleteTrackId && username) {
-      return await deleteTrackIdInDB(username, deleteTrackId)
     }
     return prepareResponse(400, 'Missing query parameter');
   } catch (e) {
