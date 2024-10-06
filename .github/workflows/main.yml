@@ -97,7 +97,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-prod:
-    needs: build_and_deploy-dev
+    needs: create-release-version
     if: github.ref == 'refs/heads/main' && success()
     runs-on: ubuntu-latest
     environment:
@@ -124,7 +124,6 @@ jobs:
         run: echo "Deployed to Production..."
 
   deploy-on-release:
-    needs: build_and_deploy-dev
     if: github.event_name == 'release' && github.event.action == 'published'
     runs-on: ubuntu-latest
     steps:
