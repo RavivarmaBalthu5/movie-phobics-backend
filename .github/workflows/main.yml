@@ -43,6 +43,11 @@ jobs:
         with:
           name: build-artifacts
           path: ./build/
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
   
   deploy-prod:
     needs: build_and_deploy-dev
