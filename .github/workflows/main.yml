@@ -26,6 +26,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -53,7 +55,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-   
+
   create-release-version:
     needs: build_and_deploy-dev
     if: github.ref == 'refs/heads/main' && success()
@@ -61,26 +63,38 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: Get Latest Tag
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Get Latest Tag and Check for Changes
         id: get_tag
         run: |
           git fetch --tags
           latest_tag=$(git tag -l "v*" | sort -V | tail -n 1)
+          latest_commit=$(git rev-parse HEAD)
+
           if [ -z "$latest_tag" ]; then
             new_tag="v1.0.0"
           else
-            version=$(echo "$latest_tag" | sed 's/v//')
-            IFS='.' read -r major minor patch <<< "$version"
-            new_patch=$((patch + 1))
-            new_tag="v${major}.${minor}.${new_patch}"
+            last_tag_commit=$(git rev-list -n 1 "$latest_tag")
+            if [ "$latest_commit" != "$last_tag_commit" ]; then
+              version=$(echo "$latest_tag" | sed 's/v//')
+              IFS='.' read -r major minor patch <<< "$version"
+              new_patch=$((patch + 1))
+              new_tag="v${major}.${minor}.${new_patch}"
+            else
+              echo "No new changes to tag."
+              exit 0
+            fi
           fi
+
           echo "New tag: $new_tag"
           echo "TAG_VERSION=$new_tag" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Tag
+        if: env.TAG_VERSION != 'v1.0.0'
         id: create_tag
         run: |
           git tag $TAG_VERSION
@@ -89,6 +103,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
+        if: env.TAG_VERSION != 'v1.0.0'
         id: create_release
         uses: actions/create-release@v1
         with:
@@ -100,7 +115,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-prod:
-    needs: create-release-version
+    needs: build_and_deploy-dev
     if: github.ref == 'refs/heads/main' && success()
     runs-on: ubuntu-latest
     environment:
@@ -109,6 +124,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
 
       - name: Install dependencies
         run: npm install
@@ -127,21 +144,33 @@ jobs:
         run: echo "Deployed to Production..."
 
   deploy-on-release:
-    if: github.event_name == 'release' && github.event.action == 'published'
+    needs: build_and_deploy-dev
+    if: github.event_name == 'release' && github.event.action == 'published' || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
 
       - name: Get Release Tag
-        run: echo "Deploying release tag ${{ github.event.release.tag_name }}"
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Deploying release tag ${{ github.event.inputs.release_version }}"
+          else
+            echo "Deploying release tag ${{ github.event.release.tag_name }}"
+          fi
 
       - name: Deploy to Production
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
-          npx netlify-cli deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            npx netlify-cli deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --deploy-url ${{ github.event.inputs.release_version }}
+          else
+            npx netlify-cli deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+          fi
 
       - name: Deployed Release to Production
-        run: echo "Deployed release ${{ github.event.release.tag_name }} to Production"
+        run: echo "Deployed release ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_version || github.event.release.tag_name }} to Production"
