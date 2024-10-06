@@ -27,7 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-depth: 0 
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -58,13 +58,13 @@ jobs:
 
   create-release-version:
     needs: build_and_deploy-dev
-    if: github.ref == 'refs/heads/main' && success()
+    if: github.ref == 'refs/heads/main' && success() && (github.event_name != 'release' && github.event.action != 'published' || github.event_name != 'workflow_dispatch')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-depth: 0
 
       - name: Get Latest Tag and Check for Changes
         id: get_tag
@@ -125,7 +125,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-depth: 0 
 
       - name: Install dependencies
         run: npm install
@@ -151,7 +151,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags
+          fetch-depth: 0
+
+      - name: Checkout specific release tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git fetch --tags
+          git checkout ${{ github.event.inputs.release_version }}
 
       - name: Get Release Tag
         run: |
@@ -166,11 +172,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            npx netlify-cli deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --deploy-url ${{ github.event.inputs.release_version }}
-          else
-            npx netlify-cli deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
-          fi
+          npx netlify-cli deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
       - name: Deployed Release to Production
         run: echo "Deployed release ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_version || github.event.release.tag_name }} to Production"
