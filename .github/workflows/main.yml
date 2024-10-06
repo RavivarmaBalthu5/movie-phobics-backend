@@ -10,8 +10,13 @@ on:
       - main
       - 'feature*'
   workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version to be used'
+        required: true
+        default: 'v1.0.0'
   release:
-    types: [published]  # Trigger on published releases
+    types: [published]
 
 jobs:
   build_and_deploy-dev:
@@ -48,19 +53,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-  
-  deploy-prod:
+   
+  create-release-version:
     needs: build_and_deploy-dev
     if: github.ref == 'refs/heads/main' && success()
     runs-on: ubuntu-latest
-    environment:
-      name: prod
-      url: https://moviephobics.netlify.app 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Get Latest Tag
+    	 - name: Get Latest Tag
         id: get_tag
         run: |
           git fetch --tags
@@ -96,6 +95,16 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  deploy-prod:
+    needs: build_and_deploy-dev
+    if: github.ref == 'refs/heads/main' && success()
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+      url: https://moviephobics.netlify.app 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: npm install
