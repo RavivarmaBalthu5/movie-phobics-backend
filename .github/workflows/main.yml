@@ -10,6 +10,8 @@ on:
       - main
       - 'feature*'
   workflow_dispatch:
+  release:
+    types: [published]  # Trigger on published releases
 
 jobs:
   build_and_deploy-dev:
@@ -41,11 +43,7 @@ jobs:
         with:
           name: build-artifacts
           path: ./build/
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-
+  
   deploy-prod:
     needs: build_and_deploy-dev
     if: github.ref == 'refs/heads/main' && success()
@@ -93,15 +91,40 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install dependencies
         run: npm install
+
       - name: Deploying to Production
         run: echo "Deploying to Production..."
+
       - name: Deploy to Production
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
           npx netlify-cli deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+
       - name: Deployed to Production
         run: echo "Deployed to Production..."
+
+  deploy-on-release:
+    needs: build_and_deploy-dev
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Release Tag
+        run: echo "Deploying release tag ${{ github.event.release.tag_name }}"
+
+      - name: Deploy to Production
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npx netlify-cli deploy --prod --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+
+      - name: Deployed Release to Production
+        run: echo "Deployed release ${{ github.event.release.tag_name }} to Production"
