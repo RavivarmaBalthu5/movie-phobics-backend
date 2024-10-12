@@ -57,39 +57,36 @@ jobs:
           name: build-artifacts
 
   deploy_dev:
-     needs: build
-     if: ((github.ref == 'refs/heads/main' || startsWith(github.ref == 'refs/heads/feature*')) && success() )|| (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
-     runs-on: ubuntu-latest
-     environment:
-       name: dev 
-     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 
+    needs: build
+    if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature/')) || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
+    runs-on: ubuntu-latest
+    environment:
+     name: dev
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 
 
-      - name: Checkout specific release tag
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          git fetch --tags
-          git checkout ${{ github.event.inputs.release_version }}
+    - name: Checkout specific release tag
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.release_version
+      run: |
+        git fetch --tags
+        git checkout ${{ github.event.inputs.release_version }}
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: npm install
 
-      - name: Deploying to Dev
-        run: echo "Deploying to Production..."
+    - name: Deploy to Dev
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      run: |
+        npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
-      - name: Deploy to Dev
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: |
-          npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
-
-      - name: Deployed to Dev
-        run: echo "Deployed to Dev..."
-
+    - name: Deployment Status
+      run: echo "Deployed to Dev environment."
+      
   create_release_version:
     needs: deploy_dev
     if: github.ref == 'refs/heads/main' && success() && github.event_name != 'workflow_dispatch'
