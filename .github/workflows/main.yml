@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      - 'feature/*' 
+      - 'feature-*'
   pull_request:
     branches:
       - main
-      - 'feature/*' 
+      - 'feature-*'
   workflow_dispatch:
     inputs:
       release_version:
@@ -58,7 +58,7 @@ jobs:
 
   deploy_dev:
     needs: build
-    if: startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
+    if: startsWith(github.ref, 'refs/heads/feature-') || github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
     runs-on: ubuntu-latest
     environment:
       name: dev
@@ -86,7 +86,7 @@ jobs:
 
       - name: Deployment Status
         run: echo "Deployed to Dev environment."
-      
+
   create_release_version:
     needs: deploy_dev
     if: github.ref == 'refs/heads/main' && success() && github.event_name != 'workflow_dispatch'
