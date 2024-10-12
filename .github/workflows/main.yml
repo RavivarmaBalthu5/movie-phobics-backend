@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      - 'feature*'
+      - 'feature/*' 
   pull_request:
     branches:
       - main
-      - 'feature*'
+      - 'feature/*' 
   workflow_dispatch:
     inputs:
       release_version:
@@ -58,34 +58,34 @@ jobs:
 
   deploy_dev:
     needs: build
-    if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature/')) || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
+    if: startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
     runs-on: ubuntu-latest
     environment:
-     name: dev
+      name: dev
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0 
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
 
-    - name: Checkout specific release tag
-      if: github.event_name == 'workflow_dispatch' && github.event.inputs.release_version
-      run: |
-        git fetch --tags
-        git checkout ${{ github.event.inputs.release_version }}
+      - name: Checkout specific release tag
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.release_version
+        run: |
+          git fetch --tags
+          git checkout ${{ github.event.inputs.release_version }}
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Deploy to Dev
-      env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-      run: |
-        npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+      - name: Deploy to Dev
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
-    - name: Deployment Status
-      run: echo "Deployed to Dev environment."
+      - name: Deployment Status
+        run: echo "Deployed to Dev environment."
       
   create_release_version:
     needs: deploy_dev
