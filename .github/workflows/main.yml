@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      - 'feature*'
+      - 'feature-*'
   pull_request:
     branches:
       - main
-      - 'feature*'
+      - 'feature-*'
   workflow_dispatch:
     inputs:
       release_version:
@@ -19,7 +19,7 @@ on:
     types: [published]
 
 jobs:
-  build_and_deploy-dev:
+  build:
     runs-on: ubuntu-latest
     outputs:
       build-path: ./build
@@ -56,8 +56,39 @@ jobs:
         with:
           name: build-artifacts
 
+  deploy_dev:
+    needs: build
+    if: startsWith(github.ref, 'refs/heads/feature-') || github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      - name: Checkout specific release tag
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.release_version
+        run: |
+          git fetch --tags
+          git checkout ${{ github.event.inputs.release_version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy to Dev
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+
+      - name: Deployment Status
+        run: echo "Deployed to Dev environment."
+
   create_release_version:
-    needs: build_and_deploy-dev
+    needs: deploy_dev
     if: github.ref == 'refs/heads/main' && success() && github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
