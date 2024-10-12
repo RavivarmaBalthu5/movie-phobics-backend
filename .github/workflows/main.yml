@@ -58,7 +58,7 @@ jobs:
 
   deploy_dev:
      needs: build
-     if: ((github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature*') && success() )|| (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
+     if: ((github.ref == 'refs/heads/main' || startsWith(github.ref == 'refs/heads/feature*')) && success() )|| (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
      runs-on: ubuntu-latest
      environment:
        name: dev 
