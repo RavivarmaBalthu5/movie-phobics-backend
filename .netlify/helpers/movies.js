@@ -1,6 +1,6 @@
 const { DEFAULT_LIMIT, MOVIE_COLLECTION, SEARCH_MOVIE_PROJECTIONS, SEARCH_MOVIE_SORT_ORDER, BASE_URL } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
-const { isEmpty } = require("lodash");
+const { isEmpty, uniqBy } = require("lodash");
 const { find, upsertDocuments } = require("../services/db");
 const axios = require('axios');
 const API_KEY = process.env.TMDB_API_KEY;
@@ -26,7 +26,7 @@ const getCurrentPageMovies = async (currentPage) => {
             }
             searchResponse.push(...response.data.results);
         }
-        const uniqueMovies = _.uniqBy(searchResponse, 'id');
+        const uniqueMovies = uniqBy(searchResponse, 'id');
         await upsertDocuments(MOVIE_COLLECTION, uniqueMovies, 'id');
         return prepareResponse(200, uniqueMovies);
     } catch (error) {
