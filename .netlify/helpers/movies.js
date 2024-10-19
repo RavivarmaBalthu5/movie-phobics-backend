@@ -8,7 +8,7 @@ const API_KEY = process.env.TMDB_API_KEY;
 const getTotalPagesCount = async () => {
     try {
         let response = await axios.get(`${BASE_URL}movie/now_playing?api_key=${API_KEY}&language=en-US`);
-        return prepareResponse(200, response?.data?.total_pages);
+        return prepareResponse(200, (response?.data?.total_pages) / 5);
     } catch (error) {
         return prepareResponse(500, { error: 'Error fetching Total Pages', details: error.message });
     }
@@ -16,14 +16,24 @@ const getTotalPagesCount = async () => {
 
 const getCurrentPageMovies = async (currentPage) => {
     try {
-        let response = await axios.get(`${BASE_URL}movie/now_playing?api_key=${API_KEY}&language=en-US&page=${currentPage}`);
-        searchResponse = response?.data?.results;
-        await upsertDocuments(MOVIE_COLLECTION, searchResponse, 'id')
+        let searchResponse = [];
+        const startingPage = (currentPage - 1) * 5 + 1;
+
+        for (let page = startingPage; page < startingPage + 5; page++) {
+            let response = await axios.get(`${BASE_URL}movie/now_playing?api_key=${API_KEY}&language=en-US&page=${page}`);
+            if (!response?.data?.results || response.data.results.length === 0) {
+                break;
+            }
+            searchResponse.push(...response.data.results);
+        }
+
+        await upsertDocuments(MOVIE_COLLECTION, searchResponse, 'id');
         return prepareResponse(200, searchResponse);
     } catch (error) {
         return prepareResponse(500, { error: 'Error fetching current page movies', details: error.message });
     }
-}
+};
+
 
 const searchMovie = async (movieName) => {
     try {
