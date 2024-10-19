@@ -26,9 +26,9 @@ const getCurrentPageMovies = async (currentPage) => {
             }
             searchResponse.push(...response.data.results);
         }
-
-        await upsertDocuments(MOVIE_COLLECTION, searchResponse, 'id');
-        return prepareResponse(200, searchResponse);
+        const uniqueMovies = _.uniqBy(searchResponse, 'id');
+        await upsertDocuments(MOVIE_COLLECTION, uniqueMovies, 'id');
+        return prepareResponse(200, uniqueMovies);
     } catch (error) {
         return prepareResponse(500, { error: 'Error fetching current page movies', details: error.message });
     }
