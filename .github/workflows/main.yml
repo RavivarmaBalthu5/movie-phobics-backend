@@ -4,17 +4,17 @@ on:
   push:
     branches:
       - main
-      - 'feature-*'
+      - "feature-*"
   pull_request:
     branches:
       - main
-      - 'feature-*'
+      - "feature-*"
   workflow_dispatch:
     inputs:
       release_version:
-        description: 'Release version to be used'
+        description: "Release version to be used"
         required: true
-        default: 'v1.0.0'
+        default: "v1.0.0"
   release:
     types: [published]
 
@@ -27,12 +27,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
         run: npm install
@@ -66,7 +66,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - name: Checkout specific release tag
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.release_version
@@ -82,7 +82,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
-          npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+          npx netlify-cli deploy --alias dev --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
 
       - name: Deployment Status
         run: echo "Deployed to Dev environment."
@@ -151,12 +151,12 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: prod
-      url: https://moviephobics.netlify.app 
+      url: https://moviephobics.netlify.app
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - name: Checkout specific release tag
         if: github.event_name == 'workflow_dispatch'
