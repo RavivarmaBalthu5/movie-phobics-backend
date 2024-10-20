@@ -72,7 +72,7 @@ const searchMovie = async (movieName) => {
 
 const fetchTrailer = async (movieIdString) => {
     try {
-        const cacheKey = `movieIdString`
+        const cacheKey = movieIdString
         const cachedData = myCache.get(cacheKey);
         if (cachedData) {
             return prepareResponse(200, cachedData);
