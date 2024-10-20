@@ -12,7 +12,7 @@ const getTotalPagesCount = async () => {
         const cacheKey = `totalPagesCount`
         const cachedData = myCache.get(cacheKey);
         if (cachedData) {
-            return cachedData;
+            return prepareResponse(200, (cachedData) / 5)
         }
         let response = await axios.get(`${BASE_URL}movie/now_playing?api_key=${API_KEY}&language=en-US`);
         myCache.set(cacheKey, response?.data?.total_pages, 3600);
@@ -27,7 +27,7 @@ const getCurrentPageMovies = async (currentPage) => {
         const cacheKey = currentPage
         const cachedData = myCache.get(cacheKey);
         if (cachedData) {
-            return cachedData;
+            return prepareResponse(200, cachedData);
         }
         let searchResponse = [];
         const startingPage = (currentPage - 1) * 5 + 1;
@@ -75,7 +75,7 @@ const fetchTrailer = async (movieIdString) => {
         const cacheKey = `movieIdString`
         const cachedData = myCache.get(cacheKey);
         if (cachedData) {
-            return cachedData;
+            return prepareResponse(200, cachedData);
         }
         const movieId = parseInt(movieIdString, 10);
         // Search for the movie to get the ID
