@@ -1,8 +1,8 @@
 {
   "name": "movie-phobics-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Provides apis for movie-phobics UI",
-  "main": ".netlify/functions/index.js",
+  "main": ".netlify/functions/fetchMovieData.js",
   "scripts": {},
   "repository": {
     "type": "git",
@@ -22,6 +22,6 @@
     "node-cache": "^5.1.2"
   },
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   }
 }
