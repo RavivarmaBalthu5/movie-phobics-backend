@@ -2,7 +2,6 @@
 
 ![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![Node Version](https://img.shields.io/badge/node-20.x-blue)
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
 The backend API service for **Movie-Phobics**, an application designed to provide tailored movie information based on user preferences. This backend serves as an API provider for the Movie-Phobics UI.
 
