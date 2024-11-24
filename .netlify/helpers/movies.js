@@ -100,11 +100,11 @@ const fetchMovieDetails = async (movieIdString) => {
         const movieId = parseInt(movieIdString, 10);
         // Search for the movie
         const response = await find(MOVIE_COLLECTION, { "id": movieId }, null, SEARCH_MOVIE_SORT_ORDER, 1);
-        if (isEmpty(response?.data.results)) {
+        if (isEmpty(response)) {
             return prepareResponse(400, { error: 'Movie not found' })
         }
-        myCache.set(cacheKey, response?.data.results, 300);
-        return prepareResponse(200, response?.data.results);
+        myCache.set(cacheKey, response, 300);
+        return prepareResponse(200, response);
 
     } catch (error) {
         return prepareResponse(500, { error: 'Error fetching movie details', details: error.message });
