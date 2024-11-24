@@ -99,7 +99,7 @@ const fetchMovieDetails = async (movieIdString) => {
         }
         const movieId = parseInt(movieIdString, 10);
         // Search for the movie
-        const response = await find(MOVIE_COLLECTION, { "_id": movieId }, null, SEARCH_MOVIE_SORT_ORDER, 1);
+        const response = await find(MOVIE_COLLECTION, { "id": movieId }, null, SEARCH_MOVIE_SORT_ORDER, 1);
         if (isEmpty(response?.data.results)) {
             return prepareResponse(400, { error: 'Movie not found' })
         }
