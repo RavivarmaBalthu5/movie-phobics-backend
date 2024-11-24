@@ -78,7 +78,6 @@ const fetchTrailer = async (movieIdString) => {
             return prepareResponse(200, cachedData);
         }
         const movieId = parseInt(movieIdString, 10);
-        // Search for the movie to get the ID
         const response = await axios.get(`${BASE_URL}movie/${movieId}/videos?api_key=${API_KEY}`);
         if (isEmpty(response?.data.results)) {
             return prepareResponse(400, { error: 'Movie videos not found' })
@@ -91,9 +90,31 @@ const fetchTrailer = async (movieIdString) => {
     }
 };
 
+const fetchMovieDetails = async (movieIdString) => {
+    try {
+        const cacheKey = movieIdString
+        const cachedData = myCache.get(cacheKey);
+        if (cachedData) {
+            return prepareResponse(200, cachedData);
+        }
+        const movieId = parseInt(movieIdString, 10);
+        // Search for the movie
+        const response = await find(MOVIE_COLLECTION, { "_id": movieId }, null, SEARCH_MOVIE_SORT_ORDER, 1);
+        if (isEmpty(response?.data.results)) {
+            return prepareResponse(400, { error: 'Movie not found' })
+        }
+        myCache.set(cacheKey, response?.data.results, 300);
+        return prepareResponse(200, response?.data.results);
+
+    } catch (error) {
+        return prepareResponse(500, { error: 'Error fetching movie details', details: error.message });
+    }
+};
+
 module.exports = {
     fetchTrailer,
     searchMovie,
     getCurrentPageMovies,
-    getTotalPagesCount
+    getTotalPagesCount,
+    fetchMovieDetails
 }
