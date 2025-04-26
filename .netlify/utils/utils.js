@@ -22,7 +22,7 @@ exports.prepareResponse = (statusCode, body) => {
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*', // Allow all origins
-            'Access-Control-Allow-Methods': 'GET, OPTIONS', // Allow GET and OPTIONS methods
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', // Allow GET and OPTIONS methods
         },
         body: JSON.stringify(body)
     };
