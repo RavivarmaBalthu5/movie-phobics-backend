@@ -1,14 +1,11 @@
 const { createUser, getUser } = require('../services/db');
-const { getHasedPassword, comparePassword } = require('../utils/utils');
+const { getHasedPassword, comparePassword, prepareResponse } = require('../utils/utils');
 
 
 
 exports.handler = async (event, context) => {
     if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ message: 'Method Not Allowed' }),
-        };
+        return prepareResponse(405, 'Method Not Allowed')
     }
 
     try {
@@ -17,19 +14,13 @@ exports.handler = async (event, context) => {
         const { type, name, email, password } = body;
 
         if (!type || !email || !password || (type === 'signup' && !name)) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ message: 'Missing required fields' }),
-            };
+            return prepareResponse(400, 'Missing required fields')
         }
 
         if (type === 'signup') {
             const existingUser = await getUser(email);
             if (existingUser) {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ message: 'User already exists' }),
-                };
+                return prepareResponse(400, 'User already exists')
             }
 
             const hashedPassword = await getHasedPassword(password);
@@ -40,45 +31,30 @@ exports.handler = async (event, context) => {
                 password: hashedPassword,
             });
 
-            return {
-                statusCode: 201,
-                body: JSON.stringify({ message: 'SignedUp successfully' }),
-            };
+            return prepareResponse(200, 'SignedUp successfully')
         }
 
         if (type === 'login') {
             const user = await getUser(email);
 
             if (!user) {
+                return prepareResponse(401, 'Invalid email addresss, Please try again')
                 return {
                     statusCode: 401,
-                    body: JSON.stringify({ message: 'Invalid email or password' }),
+                    body: JSON.stringify({ message: '' }),
                 };
             }
 
             const isMatch = await comparePassword(password, user.password);
             if (!isMatch) {
-                return {
-                    statusCode: 401,
-                    body: JSON.stringify({ message: 'Invalid email or password' }),
-                };
+                return prepareResponse(401, 'Invalid Ppassword, Please try again')
             }
 
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ message: 'Login successful' }),
-            };
+            return prepareResponse(200, 'Login successful');
         }
 
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ message: 'Invalid action type' }),
-        };
+        return prepareResponse(400, 'Invalid action type')
     } catch (error) {
-        console.error('Error:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
-        };
+        return prepareResponse(400, { message: 'Internal Server Error', error: error.message })
     }
 }
