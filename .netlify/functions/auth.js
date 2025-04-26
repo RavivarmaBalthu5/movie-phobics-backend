@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
         }
 
         if (type === 'signup') {
-            const existingUser = await getUser({ email });
+            const existingUser = await getUser(email);
             if (existingUser) {
                 return {
                     statusCode: 400,
@@ -47,7 +47,7 @@ exports.handler = async (event, context) => {
         }
 
         if (type === 'login') {
-            const user = await getUser({ email });
+            const user = await getUser(email);
 
             if (!user) {
                 return {
