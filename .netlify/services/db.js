@@ -1,4 +1,5 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
+
 const uri = process.env.MONGODB_URI
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 if (!uri) {
@@ -111,4 +112,46 @@ async function upsertDocuments(collectionName, documents, queryParam) {
 }
 
 
-module.exports = { find, upsertDocuments, aggregate };
+// Create user with hashed password
+async function createUser({ name, email, password }) {
+    let client;
+
+    try {
+        client = await setMongoConnection();
+        const database = client.db('movie_phobics');
+        const collection = database.collection('users');
+        const newUser = {
+            name,
+            email,
+            password,
+            createdAt: new Date()
+        };
+
+        const result = await collection.insertOne(newUser);
+        return { id: result.insertedId, name, email };
+    } catch (err) {
+        throw err;
+    } finally {
+        if (client) await client.close();
+    }
+}
+
+async function verifyUser(email, password) {
+    let client;
+
+    try {
+        client = await setMongoConnection();
+        const database = client.db('movie_phobics');
+        const collection = database.collection('users');
+        const user = await collection.findOne({ email });
+        return { id: user._id, name: user.name, email: user.email };
+    } catch (err) {
+        throw err;
+    } finally {
+        if (client) await client.close();
+    }
+}
+
+
+
+module.exports = { find, upsertDocuments, aggregate, verifyUser, createUser };
