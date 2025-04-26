@@ -149,6 +149,9 @@ jobs:
     needs: create_release_version
     if: github.ref == 'refs/heads/main' && success() || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
     runs-on: ubuntu-latest
+    concurrency:
+      group: prod-deployment
+      cancel-in-progress: true
     environment:
       name: prod
       url: https://moviephobics.netlify.app
