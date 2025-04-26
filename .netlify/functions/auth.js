@@ -1,4 +1,4 @@
-const { createUser, verifyUser } = require('../services/db');
+const { createUser, getUser } = require('../services/db');
 const { getHasedPassword, comparePassword } = require('../utils/utils');
 
 
@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
         }
 
         if (type === 'signup') {
-            const existingUser = await verifyUser({ email });
+            const existingUser = await getUser({ email });
             if (existingUser) {
                 return {
                     statusCode: 400,
@@ -47,7 +47,7 @@ exports.handler = async (event, context) => {
         }
 
         if (type === 'login') {
-            const user = await verifyUser({ email });
+            const user = await getUser({ email });
 
             if (!user) {
                 return {
