@@ -1,3 +1,5 @@
+const { hash, compare } = require("bcryptjs");
+
 exports.prepareProjections = (projectionArray) => {
     const isValidKey = (key) => /^[a-zA-Z0-9.]+$/.test(key); // Only alphanumeric characters are allowed
 
@@ -24,4 +26,11 @@ exports.prepareResponse = (statusCode, body) => {
         },
         body: JSON.stringify(body)
     };
+}
+
+exports.getHasedPassword = async (password) => {
+    return await hash(password, 10);
+}
+exports.comparePassword = async (password, userPassword) => {
+    return await compare(password, userPassword)
 }
