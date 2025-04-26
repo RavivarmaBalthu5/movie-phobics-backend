@@ -1,3 +1,4 @@
+const { isEmpty } = require('lodash');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const uri = process.env.MONGODB_URI
@@ -126,6 +127,9 @@ async function getUser(email) {
         const database = client.db('movie_phobics');
         const collection = database.collection('users');
         const user = await collection.findOne({ email });
+        if (isEmpty) {
+            return
+        }
         return { name: user.name, email: user.email };
     } catch (err) {
         throw err;
