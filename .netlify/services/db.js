@@ -109,8 +109,8 @@ async function createUser({ name, email, password }) {
             createdAt: new Date()
         };
 
-        const result = await collection.insertOne(newUser);
-        return { id: result.insertedId, name, email };
+        await collection.insertOne(newUser);
+        return { name, email };
     } catch (err) {
         throw err;
     } finally {
@@ -130,7 +130,7 @@ async function getUser(email) {
         if (isEmpty(user)) {
             return
         }
-        return { password: user.password, email: user.email };
+        return { password: user.password, email: user.email, name: user.name };
     } catch (err) {
         throw err;
     } finally {
