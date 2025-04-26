@@ -21,12 +21,14 @@ exports.prepareResponse = (statusCode, body) => {
         statusCode: statusCode,
         headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*', // Allow all origins
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', // Allow GET and OPTIONS methods
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
         },
         body: JSON.stringify(body)
     };
-}
+};
+
 
 exports.getHasedPassword = async (password) => {
     return await hash(password, 10);
