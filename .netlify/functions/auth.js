@@ -29,9 +29,9 @@ exports.handler = async (event, context) => {
             }
 
             const hashedPassword = await getHasedPassword(password);
-            await createUser({ name, email, password: hashedPassword });
+            let user = await createUser({ name, email, password: hashedPassword });
 
-            return prepareResponse(200, 'SignedUp successfully', origin);
+            return prepareResponse(200, user, origin);
         }
 
         if (type === 'login') {
@@ -45,7 +45,7 @@ exports.handler = async (event, context) => {
                 return prepareResponse(401, 'Invalid Password, Please try again', origin);
             }
 
-            return prepareResponse(200, 'Login successful', origin);
+            return prepareResponse(200, user, origin);
         }
 
         return prepareResponse(400, 'Invalid action type', origin);

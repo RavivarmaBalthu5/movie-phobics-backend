@@ -109,8 +109,8 @@ async function createUser({ name, email, password }) {
             createdAt: new Date()
         };
 
-        const result = await collection.insertOne(newUser);
-        return { id: result.insertedId, name, email };
+        await collection.insertOne(newUser);
+        return { name, email };
     } catch (err) {
         throw err;
     } finally {
