@@ -37,7 +37,7 @@ exports.handler = async (event, context) => {
         if (type === 'login') {
             const user = await getUser(email);
             if (!user) {
-                return prepareResponse(401, 'Invalid email address, Please try again', origin);
+                return prepareResponse(401, 'User not found, Please Signup', origin);
             }
 
             const isMatch = await comparePassword(password, user.password);
