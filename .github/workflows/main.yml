@@ -21,6 +21,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    concurrency:
+      group: prod-deployment
+      cancel-in-progress: true
     outputs:
       build-path: ./build
     steps:
@@ -60,6 +63,9 @@ jobs:
     needs: build
     if: startsWith(github.ref, 'refs/heads/feature-') || github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.release_version)
     runs-on: ubuntu-latest
+    concurrency:
+      group: prod-deployment
+      cancel-in-progress: true
     environment:
       name: dev
     steps:
@@ -91,6 +97,9 @@ jobs:
     needs: deploy_dev
     if: github.ref == 'refs/heads/main' && success() && github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
+    concurrency:
+      group: prod-deployment
+      cancel-in-progress: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
