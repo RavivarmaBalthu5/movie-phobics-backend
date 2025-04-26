@@ -32,7 +32,7 @@ exports.handler = async (event, context) => {
                 };
             }
 
-            const hashedPassword = await getHasedPassword(password)
+            const hashedPassword = await getHasedPassword(password);
 
             await createUser({
                 name,
