@@ -130,7 +130,7 @@ async function getUser(email) {
         if (isEmpty(user)) {
             return
         }
-        return { password: user.password, email: user.email };
+        return { password: user.password, email: user.email, name: user.name };
     } catch (err) {
         throw err;
     } finally {

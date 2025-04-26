@@ -44,7 +44,7 @@ exports.handler = async (event, context) => {
             if (!isMatch) {
                 return prepareResponse(401, 'Invalid Password, Please try again', origin);
             }
-
+            delete user?.password
             return prepareResponse(200, user, origin);
         }
 
