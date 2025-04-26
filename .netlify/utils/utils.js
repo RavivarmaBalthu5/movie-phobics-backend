@@ -15,16 +15,26 @@ exports.prepareProjections = (projectionArray) => {
 
     return projectionObj;
 }
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://dev--moviephobics.netlify.app',
+    'https://moviephobics.netlify.app'
+]
 
-exports.prepareResponse = (statusCode, body) => {
+exports.prepareResponse = (statusCode, body, origin) => {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+    };
+
+    if (allowedOrigins.includes(origin)) {
+        headers['Access-Control-Allow-Origin'] = origin;
+    }
+
     return {
-        statusCode: statusCode,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type',
-        },
+        statusCode,
+        headers,
         body: JSON.stringify(body)
     };
 };
