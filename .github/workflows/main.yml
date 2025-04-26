@@ -21,9 +21,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    concurrency:
-      group: build-deployment
-      cancel-in-progress: true
     outputs:
       build-path: ./build
     steps:
