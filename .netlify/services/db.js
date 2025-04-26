@@ -126,7 +126,7 @@ async function getUser(email) {
         const database = client.db('movie_phobics');
         const collection = database.collection('users');
         const user = await collection.findOne({ email });
-        return { id: user._id, name: user.name, email: user.email };
+        return { name: user.name, email: user.email };
     } catch (err) {
         throw err;
     } finally {
