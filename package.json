@@ -15,10 +15,10 @@
   },
   "homepage": "https://github.com/RavivarmaBalthu5/movie-phobics-backend#readme",
   "devDependencies": {
-    "axios": "^1.8.2",
-    "lodash": "^4.17.23",
+    "axios": "^1.15.0",
+    "lodash": "^4.18.1",
     "mongodb": "^6.8.0",
-    "netlify-cli": "^24.9.0",
+    "netlify-cli": "^25.6.1",
     "node-cache": "^5.1.2"
   },
   "engines": {
