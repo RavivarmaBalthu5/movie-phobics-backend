@@ -3,3 +3,5 @@ node_modules
 .netlify/functions-internal/*
 .netlify/v1/*
 .netlify/state.json
+.netlify/db/*
+.idea/*

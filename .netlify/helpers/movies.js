@@ -1,4 +1,4 @@
-const { DEFAULT_LIMIT, MOVIE_COLLECTION, SEARCH_MOVIE_PROJECTIONS, SEARCH_MOVIE_SORT_ORDER, BASE_URL } = require("../utils/constants");
+const { DEFAULT_LIMIT, MOVIE_COLLECTION, SEARCH_MOVIE_PROJECTIONS, SEARCH_MOVIE_SORT_ORDER, BASE_URL, NOW_PLAYING_PAGES_PER_HIT } = require("../utils/constants");
 const { prepareResponse } = require("../utils/utils");
 const { isEmpty, uniqBy } = require("lodash");
 const { find, upsertDocuments } = require("../services/db");
@@ -12,11 +12,11 @@ const getTotalPagesCount = async (origin) => {
         const cacheKey = `totalPagesCount`
         const cachedData = myCache.get(cacheKey);
         if (cachedData) {
-            return prepareResponse(200, (cachedData) / 5, origin)
+            return prepareResponse(200, (cachedData) / NOW_PLAYING_PAGES_PER_HIT, origin)
         }
         let response = await axios.get(`${BASE_URL}movie/now_playing?api_key=${API_KEY}&language=en-US`);
         myCache.set(cacheKey, response?.data?.total_pages, 3600);
-        return prepareResponse(200, (response?.data?.total_pages) / 5, origin);
+        return prepareResponse(200, (response?.data?.total_pages) / NOW_PLAYING_PAGES_PER_HIT, origin);
     } catch (error) {
         return prepareResponse(500, { error: 'Error fetching Total Pages', details: error.message }, origin);
     }
@@ -30,9 +30,9 @@ const getCurrentPageMovies = async (currentPage, origin) => {
             return prepareResponse(200, cachedData, origin);
         }
         let searchResponse = [];
-        const startingPage = (currentPage - 1) * 5 + 1;
+        const startingPage = (currentPage - 1) * NOW_PLAYING_PAGES_PER_HIT + 1;
 
-        for (let page = startingPage; page < startingPage + 5; page++) {
+        for (let page = startingPage; page < startingPage + NOW_PLAYING_PAGES_PER_HIT; page++) {
             let response = await axios.get(`${BASE_URL}movie/now_playing?api_key=${API_KEY}&language=en-US&page=${page}`);
             if (!response?.data?.results || response.data.results.length === 0) {
                 break;
